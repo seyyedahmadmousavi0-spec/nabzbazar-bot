@@ -32,7 +32,9 @@ class Asset:
 
     @property
     def expected_unit(self) -> str:
-        return "USD" if self.category == "crypto" else "IRR"
+        if self.key in ("gold_ounce", "oil_brent"):
+            return "USD"
+        return "USD" if self.category in ("crypto", "energy") else "IRR"
 
 
 class Catalog:

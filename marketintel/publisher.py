@@ -199,15 +199,25 @@ def render_market_bulletin(conn: sqlite3.Connection, tzname: str = "Asia/Tehran"
     ]
 
     PRIORITY = {
-        "usd": 10, "eur": 12, "gbp": 14, "aed": 16, "try": 18,
-        "gold18": 20, "gold_melted": 22, "mesghal": 24, "gold_ounce": 26,
-        "coin_emami": 30, "coin_bahar": 32, "coin_half": 34, "coin_quarter": 36, "coin_gerami": 38,
-        "usdt": 40, "btc": 42, "eth": 44,
+        # Currency
+        "usd": 10, "usd_herat": 11, "eur": 12, "gbp": 13, "aed": 14, "try": 15,
+        "cad": 16, "aud": 17, "cny": 18, "iqd": 19, "afn": 20, "omr": 21, "azn": 22,
+
+        # Gold & Coins
+        "gold18": 30, "gold24": 31, "gold_melted": 32, "mesghal": 33, "gold_ounce": 34,
+        "coin_emami": 35, "coin_bahar": 36, "coin_half": 37, "coin_quarter": 38, "coin_gerami": 39,
+
+        # Energy
+        "oil_brent": 50,
+
+        # Crypto
+        "usdt": 60, "btc": 61, "eth": 62, "ton": 63, "trx": 64, "sol": 65, "xrp": 66, "doge": 67, "bnb": 68, "paxg": 69,
     }
     latest_items.sort(key=lambda x: (PRIORITY.get(x["asset_key"], 99), -(x["amount"] or 0)))
 
     currencies = []
     gold_coins = []
+    energy_items = []
     cryptos = []
 
     for it in latest_items:
@@ -215,31 +225,71 @@ def render_market_bulletin(conn: sqlite3.Connection, tzname: str = "Asia/Tehran"
         name = it["asset_name"] or it["asset_key"]
         side_fa = " (خرید)" if it["side"] == "buy" else (" (فروش)" if it["side"] == "sell" else "")
         unit = it["stated_unit"] or "تومان"
-        unit_str = "تومان" if unit == "IRT" else ("ریال" if unit == "IRR" else unit)
-        amt_str = fmt_number(it['amount'], sep=sep)
+        unit_str = "تومان" if unit == "IRT" else ("ریال" if unit == "IRR" else ("دلار" if unit == "USD" else unit))
+        is_float = bool(it['amount'] and (float(it['amount']) % 1 != 0 or float(it['amount']) < 100))
+        dec = 2 if is_float else 0
+        amt_str = fmt_number(it['amount'], decimals=dec, sep=sep)
 
-        entry = f"{RLM}• <b>{e(name)}{side_fa}</b>: {amt_str} {unit_str}"
+        # Determine percentage change and direction indicator
+        chg_str = ""
+        extras = jload(it["extras"], {}) if isinstance(it["extras"], str) else (it["extras"] or {})
+        change_pct = extras.get("change_pct")
+
+        if change_pct is None and it["amount_canonical"] is not None:
+            prev = conn.execute(
+                "SELECT amount_canonical, canonical_unit FROM records WHERE entity_key=? AND canonical_unit=? AND id<? AND amount_canonical IS NOT NULL "
+                "ORDER BY id DESC LIMIT 1",
+                (it["entity_key"], it["canonical_unit"], it["id"])
+            ).fetchone()
+            if prev and prev["amount_canonical"] and it["amount_canonical"]:
+                prev_amt = prev["amount_canonical"]
+                curr_amt = it["amount_canonical"]
+                if prev_amt > 0:
+                    diff_pct = ((curr_amt - prev_amt) / prev_amt) * 100
+                    if 0.01 <= abs(diff_pct) < 1000:
+                        change_pct = round(diff_pct, 2)
+
+        if change_pct is not None:
+            try:
+                change_pct = float(change_pct)
+                if change_pct > 0:
+                    chg_str = f" (↑ {to_persian_digits(f'{change_pct:.2f}')}٪ 🟢)"
+                elif change_pct < 0:
+                    chg_str = f" (↓ {to_persian_digits(f'{abs(change_pct):.2f}')}٪ 🔴)"
+                else:
+                    chg_str = " (بدون تغییر ➖)"
+            except (ValueError, TypeError):
+                chg_str = ""
+
+        entry = f"{RLM}• <b>{e(name)}{side_fa}</b>: {amt_str} {unit_str}{chg_str}"
 
         if cat == "currency":
             currencies.append(entry)
         elif cat in ("gold", "coin"):
             gold_coins.append(entry)
+        elif cat == "energy" or it["asset_key"] == "oil_brent":
+            energy_items.append(entry)
         elif cat == "crypto":
             cryptos.append(entry)
 
     if currencies:
         lines.append(f"{RLM}💵 <b>ارز و اسکناس:</b>")
-        lines.extend(currencies[:6])
+        lines.extend(currencies[:10])
         lines.append("")
 
     if gold_coins:
         lines.append(f"{RLM}🪙 <b>طلا و مسکوکات:</b>")
-        lines.extend(gold_coins[:7])
+        lines.extend(gold_coins[:10])
+        lines.append("")
+
+    if energy_items:
+        lines.append(f"{RLM}🛢️ <b>نفت و انرژی:</b>")
+        lines.extend(energy_items[:2])
         lines.append("")
 
     if cryptos:
         lines.append(f"{RLM}🌐 <b>رمزارزها:</b>")
-        lines.extend(cryptos[:5])
+        lines.extend(cryptos[:8])
         lines.append("")
 
     lines.append("────────────────────")

@@ -54,6 +54,8 @@ def normalize_text(text: str) -> str:
     s = re.sub(r'(?<=\d)[,\.]\s*[\u200c\u200b]+\s*(?=\d)', ',', s)
     # Convert slash thousand separators like 5/250 to 5,250
     s = re.sub(r'(?<=\d)/(?=\d{3}(?!\d))', ',', s)
+    # Convert shorthand 'هـ.تومان' / 'ه.تومان' following digits to 'هزار تومان'
+    s = re.sub(r'(?<=\d)\s*هـ?\s*\.?\s*تومان', ' هزار تومان', s)
     return s
 
 

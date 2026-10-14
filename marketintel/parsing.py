@@ -202,6 +202,21 @@ def _build_market_items(w: str, assets: list, ctx: SourceCtx, header: str | None
                 if primary.scale_word:
                     it.extras["scale_word"] = primary.scale_word
                 it.extras["raw_price"] = primary.raw
+                pct_toks = [t for t in gt if t.is_percent] or [t for t in toks if t.is_percent]
+                if pct_toks:
+                    try:
+                        pct_val = float(pct_toks[0].value)
+                        p_start, p_end = pct_toks[0].start, pct_toks[0].end
+                        around = seg[max(0, p_start - 6):min(len(seg), p_end + 6)]
+                        if any(c in around for c in ("↓", "🔻", "-", "▼")) or ("🔴" in seg and "🟢" not in seg):
+                            if pct_val > 0:
+                                pct_val = -pct_val
+                        elif any(c in around for c in ("↑", "🔼", "+", "▲")) or ("🟢" in seg and "🔴" not in seg):
+                            if pct_val < 0:
+                                pct_val = abs(pct_val)
+                        it.extras["change_pct"] = round(pct_val, 2)
+                    except Exception:
+                        pass
                 if it.stated_unit is None:
                     it.flags.append("missing_unit")
                 elif it.unit_rule.startswith("source_default") or it.unit_rule.startswith("message_header"):

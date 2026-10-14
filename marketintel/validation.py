@@ -63,7 +63,8 @@ def validate(conn: sqlite3.Connection, item: ParsedItem, observed_at: datetime, 
         codes.append("missing_price")
 
     if asset and canon is not None and cunit is not None:
-        if cunit != asset.expected_unit:
+        valid_unit = (cunit == asset.expected_unit) or (asset.category in ("crypto", "energy") and cunit in ("USD", "IRR")) or (asset.key in ("gold_ounce", "paxg") and cunit in ("USD", "IRR"))
+        if not valid_unit:
             codes.append("unexpected_unit")
         else:
             lo, hi = asset.bounds
