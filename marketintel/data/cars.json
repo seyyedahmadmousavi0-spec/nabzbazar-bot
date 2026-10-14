@@ -1,15 +1,22 @@
 {
-  "_note": "Small starter dictionary of brands/models; extend via this file. Models are matched after normalization.",
+  "_note": "Configurable dictionary of brands/models. Models are matched after normalization.",
   "brands": {
     "peugeot": {"name_fa": "پژو", "aliases": ["پژو"], "models": {"206": ["206", "۲۰۶"], "207": ["207"], "405": ["405"], "pars": ["پارس"], "208": ["208"], "301": ["301"]}},
-    "saipa": {"name_fa": "سایپا", "aliases": ["سایپا"], "models": {"pride": ["پراید"], "tiba": ["تیبا"], "saina": ["ساینا"], "quick": ["کوییک", "کوییک"], "shahin": ["شاهین"], "tara": ["تارا"]}},
-    "pride": {"name_fa": "پراید", "aliases": ["پراید"], "models": {"pride": ["131", "111", "132", "151"]}},
-    "ikco": {"name_fa": "ایران‌خودرو", "aliases": ["ایران خودرو"], "models": {"dena": ["دنا"], "samand": ["سمند"], "runna": ["رانا"], "soren": ["سورن"]}},
+    "saipa": {"name_fa": "سایپا", "aliases": ["سایپا"], "models": {"pride": ["پراید"], "tiba": ["تیبا"], "saina": ["ساینا"], "quick": ["کوییک", "کوئیک"], "shahin": ["شاهین"], "atlas": ["اطلس"], "sahand": ["سهند"]}},
+    "pride": {"name_fa": "پراید", "aliases": ["پراید"], "models": {"pride": ["131", "111", "132", "151", "وانت"]}},
+    "ikco": {"name_fa": "ایران‌خودرو", "aliases": ["ایران خودرو", "ایران‌خودرو"], "models": {"dena": ["دنا"], "samand": ["سمند"], "runna": ["رانا"], "soren": ["سورن"], "tara": ["تارا"], "re_ra": ["ری‌را", "ری را", "ریرا"], "arisan": ["آریسان", "اریسان"]}},
     "samand": {"name_fa": "سمند", "aliases": ["سمند"], "models": {"lx": ["lx", "ال ایکس"], "soren": ["سورن"]}},
-    "dena": {"name_fa": "دنا", "aliases": ["دنا"], "models": {"plus": ["پلاس"]}},
-    "haima": {"name_fa": "هایما", "aliases": ["هایما"], "models": {"s7": ["s7"], "8s": ["8s"]}},
-    "hyundai": {"name_fa": "هیوندای", "aliases": ["هیوندای", "هیوندا"], "models": {"elantra": ["النترا"], "tucson": ["توسان"]}},
+    "dena": {"name_fa": "دنا", "aliases": ["دنا"], "models": {"plus": ["پلاس", "توربو"]}},
+    "tara": {"name_fa": "تارا", "aliases": ["تارا"], "models": {"tara": ["v1", "v2", "v4", "اتوماتیک", "دستی", "پلاس"]}},
+    "shahin": {"name_fa": "شاهین", "aliases": ["شاهین"], "models": {"shahin": ["g", "gl", "اتوماتیک", "پلاس"]}},
+    "quick": {"name_fa": "کوییک", "aliases": ["کوییک", "کوئیک"], "models": {"quick": ["r", "s", "g", "gx"]}},
+    "saina": {"name_fa": "ساینا", "aliases": ["ساینا"], "models": {"saina": ["s", "gx", "دوگانه"]}},
+    "haima": {"name_fa": "هایما", "aliases": ["هایما"], "models": {"s7": ["s7"], "8s": ["8s"], "7x": ["7x"]}},
+    "toyota": {"name_fa": "تویوتا", "aliases": ["تویوتا"], "models": {"corolla": ["کرولا", "corolla"], "frontlander": ["فرانتلندر", "فرانت لندر"], "cross": ["کرولا کراس", "کراس"]}},
+    "citroen": {"name_fa": "سیتروئن", "aliases": ["سیتروئن"], "models": {"c3": ["c3", "سی ۳", "سی 3"]}},
+    "nissan": {"name_fa": "نیسان", "aliases": ["نیسان"], "models": {"pickup": ["وانت", "تک سوز", "دوگانه", "آبی"]}},
+    "hyundai": {"name_fa": "هیوندای", "aliases": ["هیوندای", "هیوندا"], "models": {"elantra": ["النترا"], "tucson": ["توسان"], "santafe": ["سانتافه"]}},
     "kia": {"name_fa": "کیا", "aliases": ["کیا"], "models": {"cerato": ["سراتو"], "sportage": ["اسپورتیج"]}}
   },
-  "cities": ["تهران", "مشهد", "اصفهان", "شیراز", "تبریز", "کرج", "اهواز", "قم", "رشت", "کرمان", "یزد", "ساری", "اراک", "همدان"]
+  "cities": ["تهران", "مشهد", "اصفهان", "شیراز", "تبریز", "کرج", "اهواز", "قم", "رشت", "کرمان", "یزد", "ساری", "اراک", "همدان", "بوشهر"]
 }

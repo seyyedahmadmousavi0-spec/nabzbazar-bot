@@ -12,7 +12,8 @@
         "currency",
         "gold",
         "coin",
-        "crypto"
+        "crypto",
+        "energy"
       ],
       "parser": "generic",
       "default_unit": "IRT",
@@ -34,7 +35,8 @@
         "currency",
         "gold",
         "coin",
-        "crypto"
+        "crypto",
+        "energy"
       ],
       "parser": "generic",
       "default_unit": "IRT",
@@ -56,7 +58,8 @@
         "currency",
         "gold",
         "coin",
-        "crypto"
+        "crypto",
+        "energy"
       ],
       "parser": "generic",
       "default_unit": "IRT",
@@ -78,7 +81,8 @@
         "currency",
         "gold",
         "coin",
-        "crypto"
+        "crypto",
+        "energy"
       ],
       "parser": "generic",
       "default_unit": "IRT",
@@ -100,7 +104,8 @@
         "currency",
         "gold",
         "coin",
-        "crypto"
+        "crypto",
+        "energy"
       ],
       "parser": "generic",
       "default_unit": "IRT",
@@ -110,6 +115,106 @@
       "restrictions": "Open Telegram Channel",
       "retention_days": 365,
       "poll_interval_s": 30
+    },
+    {
+      "key": "saipa_tl",
+      "name": "سایپا (اخبار و قیمت)",
+      "source_type": "telegram_channel",
+      "access_method": "telegram_web",
+      "enabled": true,
+      "chat_ref": "@SaipaTL",
+      "categories": [
+        "car",
+        "deal"
+      ],
+      "parser": "generic",
+      "default_unit": "IRT",
+      "reliability": 0.85,
+      "attribution": "سایپا TL",
+      "url_template": "https://t.me/{username}/{message_id}",
+      "restrictions": "Open Telegram Channel",
+      "retention_days": 365,
+      "poll_interval_s": 60
+    },
+    {
+      "key": "saipa_newpage",
+      "name": "سایپا نیوز",
+      "source_type": "telegram_channel",
+      "access_method": "telegram_web",
+      "enabled": true,
+      "chat_ref": "@saipanewpage",
+      "categories": [
+        "car",
+        "deal"
+      ],
+      "parser": "generic",
+      "default_unit": "IRT",
+      "reliability": 0.85,
+      "attribution": "سایپا نیوز",
+      "url_template": "https://t.me/{username}/{message_id}",
+      "restrictions": "Open Telegram Channel",
+      "retention_days": 365,
+      "poll_interval_s": 60
+    },
+    {
+      "key": "ikco_eco",
+      "name": "ایران‌خودرو اکو",
+      "source_type": "telegram_channel",
+      "access_method": "telegram_web",
+      "enabled": true,
+      "chat_ref": "@ikcoeco",
+      "categories": [
+        "car",
+        "deal"
+      ],
+      "parser": "generic",
+      "default_unit": "IRT",
+      "reliability": 0.85,
+      "attribution": "ایران خودرو اکو",
+      "url_template": "https://t.me/{username}/{message_id}",
+      "restrictions": "Open Telegram Channel",
+      "retention_days": 365,
+      "poll_interval_s": 60
+    },
+    {
+      "key": "irankhodro_tg",
+      "name": "ایران‌خودرو تلگرام",
+      "source_type": "telegram_channel",
+      "access_method": "telegram_web",
+      "enabled": true,
+      "chat_ref": "@IranKhodroTG",
+      "categories": [
+        "car",
+        "deal"
+      ],
+      "parser": "generic",
+      "default_unit": "IRT",
+      "reliability": 0.85,
+      "attribution": "ایران خودرو TG",
+      "url_template": "https://t.me/{username}/{message_id}",
+      "restrictions": "Open Telegram Channel",
+      "retention_days": 365,
+      "poll_interval_s": 60
+    },
+    {
+      "key": "irankhodro_3007",
+      "name": "ایران‌خودرو ۳۰۰۷",
+      "source_type": "telegram_channel",
+      "access_method": "telegram_web",
+      "enabled": true,
+      "chat_ref": "@irankhodro3007",
+      "categories": [
+        "car",
+        "deal"
+      ],
+      "parser": "generic",
+      "default_unit": "IRT",
+      "reliability": 0.85,
+      "attribution": "ایران خودرو ۳۰۰۷",
+      "url_template": "https://t.me/{username}/{message_id}",
+      "restrictions": "Open Telegram Channel",
+      "retention_days": 365,
+      "poll_interval_s": 60
     }
   ]
 }

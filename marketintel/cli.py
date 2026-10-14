@@ -28,7 +28,7 @@ def _conn(cfg: Config) -> sqlite3.Connection:
         if not c.execute("SELECT 1 FROM categories LIMIT 1").fetchone():
             load_categories(c, default_catalog().categories)
         sources_file = Path("config/sources.json")
-        if not c.execute("SELECT 1 FROM sources LIMIT 1").fetchone() and sources_file.exists():
+        if sources_file.exists():
             load_sources_file(c, sources_file)
         if not c.execute("SELECT 1 FROM users WHERE role='admin' LIMIT 1").fetchone():
             import os

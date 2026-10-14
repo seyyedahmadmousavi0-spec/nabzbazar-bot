@@ -24,10 +24,10 @@ _RANGE_SEP = re.compile(r"^\s*(?:تا|الی|-|–|~)\s*$")
 _BULLET = re.compile(r"^[\s•\-–*#>🔹🔸🟢🔴⚪️▪️◾️💰💵📌✅❌⭐️]+")
 _CODE_RE = re.compile(r"کد(?: تخفیف)?\s*:?\s*([a-z0-9_-]{3,})", re.I)
 _EXPIRE_H = re.compile(r"تا\s*(\d{1,3})\s*ساعت دیگر")
-_YEAR_RE = re.compile(r"مدل\s*(1[34]\d\d|20\d\d)")
+_YEAR_RE = re.compile(r"(?:مدل\s*)?(?<!\d)(1[34]\d\d|20[12]\d)(?!\d)")
 _TIP_RE = re.compile(r"تیپ\s*(\d)")
 _KM_RE = re.compile(r"کارکرد\s*([\d,]+)\s*(?:کیلومتر|km)?")
-_VARIANT_WORDS = ("اتوماتیک", "دنده ای", "دستی", "پلاس", "فول")
+_VARIANT_WORDS = ("اتوماتیک", "دنده ای", "دستی", "پلاس", "فول", "الیت", "کراس", "توربو")
 UNIT_NAMES = {"IRT": "toman", "IRR": "rial", "USD": "usd"}
 
 
@@ -348,6 +348,17 @@ def parse_generic(text: str, ctx: SourceCtx, cat: Catalog | None = None) -> Pars
         elif (deal := _build_deal_item(w, ctx, header, urls, line_obs)) is not None:
             line_items = [deal]
         else:
+            if items and items[-1].category == "car" and "missing_price" in items[-1].flags and toks:
+                priced = [t for t in toks if t.unit or t.scale_word or t.value >= 100_000_000]
+                if priced:
+                    it_car = items[-1]
+                    it_car.amount = priced[0].value
+                    it_car.stated_unit, it_car.unit_rule = _resolve_unit(priced[0].unit, header, ctx)
+                    it_car.extras["raw_price"] = priced[0].raw
+                    it_car.flags.remove("missing_price")
+                    if it_car.stated_unit is None:
+                        it_car.flags.append("missing_unit")
+                    continue
             if toks:
                 skipped += 1
             continue

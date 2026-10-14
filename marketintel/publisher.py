@@ -219,6 +219,7 @@ def render_market_bulletin(conn: sqlite3.Connection, tzname: str = "Asia/Tehran"
     gold_coins = []
     energy_items = []
     cryptos = []
+    cars = []
 
     for it in latest_items:
         cat = it["category"]
@@ -261,6 +262,18 @@ def render_market_bulletin(conn: sqlite3.Connection, tzname: str = "Asia/Tehran"
             except (ValueError, TypeError):
                 chg_str = ""
 
+        if cat == "car":
+            CAR_MODEL_FA = {
+                "corolla": "کرولا", "frontlander": "فرانتلندر", "cross": "کراس",
+                "pride": "پراید", "tiba": "تیبا", "saina": "ساینا", "quick": "کوییک",
+                "shahin": "شاهین", "tara": "تارا", "dena": "دنا", "samand": "سمند",
+                "runna": "رانا", "soren": "سورن", "re_ra": "ری‌را", "arisan": "آریسان",
+                "pickup": "پیکاپ/وانت", "atlas": "اطلس", "sahand": "سهند", "c3": "سی ۳",
+            }
+            m_fa = CAR_MODEL_FA.get(it["model"], it["model"])
+            name = " ".join(x for x in [it["asset_name"], m_fa, it["variant"]] if x)
+        else:
+            name = it["asset_name"] or it["asset_key"]
         entry = f"{RLM}• <b>{e(name)}{side_fa}</b>: {amt_str} {unit_str}{chg_str}"
 
         if cat == "currency":
@@ -271,6 +284,9 @@ def render_market_bulletin(conn: sqlite3.Connection, tzname: str = "Asia/Tehran"
             energy_items.append(entry)
         elif cat == "crypto":
             cryptos.append(entry)
+        elif cat == "car":
+            if it['amount'] and it['amount'] >= 100_000_000:
+                cars.append(entry)
 
     if currencies:
         lines.append(f"{RLM}💵 <b>ارز و اسکناس:</b>")
@@ -290,6 +306,11 @@ def render_market_bulletin(conn: sqlite3.Connection, tzname: str = "Asia/Tehran"
     if cryptos:
         lines.append(f"{RLM}🌐 <b>رمزارزها:</b>")
         lines.extend(cryptos[:8])
+        lines.append("")
+
+    if cars:
+        lines.append(f"{RLM}🚗 <b>بازار و قیمت خودرو:</b>")
+        lines.extend(cars[:6])
         lines.append("")
 
     lines.append("────────────────────")
