@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ورود به پنل مدیریت — نبض بازار ۳۶۰</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: rgba(255, 255, 255, 0.98);
+      --pri: #2563eb;
+      --pri-hover: #1d4ed8;
+      --pri-glow: rgba(37, 99, 235, 0.35);
+      --line: #e2e8f0;
+      --ink: #0f172a;
+      --mut: #64748b;
+      --bad: #e11d48;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, Tahoma, sans-serif;
+      background: radial-gradient(circle at 10% 20%, #1e293b 0%, #0f172a 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      color: var(--ink);
+    }
+    .login-container {
+      width: 100%;
+      max-width: 400px;
+      perspective: 1000px;
+    }
+    .login-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 24px;
+      padding: 2.5rem 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+    .brand-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .brand-icon {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 1rem;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      box-shadow: 0 8px 20px var(--pri-glow);
+    }
+    h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 0.3rem;
+    }
+    .sub {
+      color: var(--mut);
+      font-size: 0.88rem;
+    }
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #334155;
+      margin-bottom: 0.4rem;
+    }
+    input {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border: 1.5px solid var(--line);
+      border-radius: 12px;
+      font: inherit;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+      background: #f8fafc;
+    }
+    input:focus {
+      outline: none;
+      border-color: var(--pri);
+      background: #fff;
+      box-shadow: 0 0 0 4px var(--pri-glow);
+    }
+    button {
+      width: 100%;
+      padding: 0.85rem;
+      margin-top: 0.8rem;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--pri), var(--pri-hover));
+      color: #fff;
+      font: inherit;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 4px 15px var(--pri-glow);
+      transition: all 0.2s ease;
+    }
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px var(--pri-glow);
+    }
+    button:active {
+      transform: translateY(0);
+    }
+    .flash-msg {
+      background: #fff1f2;
+      color: var(--bad);
+      border: 1px solid #ffe4e6;
+      border-radius: 10px;
+      padding: 0.7rem 1rem;
+      font-size: 0.88rem;
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .footer-note {
+      text-align: center;
+      margin-top: 1.8rem;
+      font-size: 0.8rem;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-card">
+      <div class="brand-header">
+        <div class="brand-icon">📈</div>
+        <h2>پنل مدیریت نبض بازار ۳۶۰</h2>
+        <p class="sub">سامانه هوشمند پایش و انتشار خودکار بازار</p>
+      </div>
+
+      {% for c, m in get_flashed_messages(with_categories=true) %}
+        <div class="flash-msg">⚠️ {{ m }}</div>
+      {% endfor %}
+
+      <form method="post">
+        <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+        <div class="form-group">
+          <label>نام کاربری</label>
+          <input name="username" placeholder="admin" autocomplete="username" required autofocus>
+        </div>
+        <div class="form-group">
+          <label>گذرواژه</label>
+          <input name="password" type="password" placeholder="••••••••••" autocomplete="current-password" required>
+        </div>
+        <button type="submit">ورود به پنل</button>
+      </form>
+
+      <div class="footer-note">
+        سیستم هوشمند پایش لحظه‌ای و آربیتراژ بازار
+      </div>
+    </div>
+  </div>
+</body>
+</html>

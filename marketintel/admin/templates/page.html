@@ -1,0 +1,946 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{ title }} — نبض بازار ۳۶۰</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --header-bg: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      --ink: #0f172a;
+      --mut: #64748b;
+      --line: #e2e8f0;
+      --pri: #2563eb;
+      --pri-hover: #1d4ed8;
+      --pri-soft: #eff6ff;
+      --ok: #059669;
+      --ok-bg: #ecfdf5;
+      --warn: #d97706;
+      --warn-bg: #fffbeb;
+      --bad: #e11d48;
+      --bad-bg: #fff1f2;
+      --shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, Tahoma, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    
+    /* Top Header */
+    header {
+      background: var(--header-bg);
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1rem;
+      align-items: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(8px);
+    }
+    .brand-title {
+      font-weight: 800;
+      font-size: 1.15rem;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-left: 1rem;
+    }
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem 0.5rem;
+      align-items: center;
+    }
+    .nav-links a {
+      color: #cbd5e1;
+      text-decoration: none;
+      font-size: 0.88rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      font-weight: 500;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.12);
+    }
+    .header-user {
+      margin-inline-start: auto;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .user-badge {
+      font-size: 0.8rem;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.25rem 0.6rem;
+      border-radius: 20px;
+      color: #94a3b8;
+    }
+    .logout-btn {
+      background: rgba(225, 29, 72, 0.2) !important;
+      color: #fecdd3 !important;
+      border: 1px solid rgba(225, 29, 72, 0.3) !important;
+      padding: 0.3rem 0.8rem !important;
+      border-radius: 8px !important;
+      cursor: pointer;
+      font: inherit;
+      font-size: 0.82rem;
+      transition: all 0.2s ease;
+    }
+    .logout-btn:hover {
+      background: rgba(225, 29, 72, 0.4) !important;
+      color: #fff !important;
+    }
+    
+    /* Layout */
+    main {
+      padding: 1.5rem;
+      max-width: 1360px;
+      margin: auto;
+    }
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+    h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    
+    /* Cards & Grids */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      box-shadow: var(--shadow);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+    .stat {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1.1rem;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .stat:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px -4px rgba(15, 23, 42, 0.08);
+    }
+    .stat::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--pri), #38bdf8);
+    }
+    .stat b {
+      font-size: 1.7rem;
+      font-weight: 800;
+      display: block;
+      color: #0f172a;
+      line-height: 1.2;
+      margin-bottom: 0.3rem;
+    }
+    .stat .mut {
+      font-size: 0.84rem;
+      font-weight: 500;
+      color: var(--mut);
+    }
+    
+    /* Tables */
+    .tablewrap {
+      overflow-x: auto;
+      border-radius: var(--radius);
+    }
+    table {
+      border-collapse: separate;
+      border-spacing: 0;
+      width: 100%;
+      font-size: 0.88rem;
+    }
+    th, td {
+      border-bottom: 1px solid var(--line);
+      padding: 0.65rem 0.9rem;
+      text-align: right;
+      vertical-align: middle;
+    }
+    th {
+      background: #f8fafc;
+      color: #475569;
+      font-weight: 600;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-top: 1px solid var(--line);
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    tr:hover td {
+      background: #fbfcfe;
+    }
+    
+    /* Badges */
+    .b {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.2rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      background: #f1f5f9;
+      color: #475569;
+    }
+    .valid, .sent, .ok, .approved, .published {
+      background: var(--ok-bg);
+      color: var(--ok);
+      border: 1px solid rgba(5, 150, 105, 0.2);
+    }
+    .needs_review, .pending, .pending_approval, .queued, .degraded, .stale, .uncertain {
+      background: var(--warn-bg);
+      color: var(--warn);
+      border: 1px solid rgba(217, 119, 6, 0.2);
+    }
+    .invalid, .failed, .failing, .rejected, .ERROR {
+      background: var(--bad-bg);
+      color: var(--bad);
+      border: 1px solid rgba(225, 29, 72, 0.2);
+    }
+    .duplicate, .superseded, .cancelled, .retracted {
+      background: #f1f5f9;
+      color: var(--mut);
+    }
+    
+    /* Buttons & Inputs */
+    button, .btn {
+      font: inherit;
+      padding: 0.4rem 0.9rem;
+      border-radius: 9px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: #334155;
+      font-weight: 500;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+    }
+    button:hover, .btn:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+    }
+    button.pri {
+      background: linear-gradient(135deg, var(--pri), var(--pri-hover));
+      color: #fff;
+      border-color: var(--pri);
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+    }
+    button.pri:hover {
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+      transform: translateY(-1px);
+    }
+    button.bad {
+      background: linear-gradient(135deg, #e11d48, #be123c);
+      color: #fff;
+      border-color: #e11d48;
+      box-shadow: 0 2px 8px rgba(225, 29, 72, 0.25);
+    }
+    button.bad:hover {
+      box-shadow: 0 4px 12px rgba(225, 29, 72, 0.35);
+      transform: translateY(-1px);
+    }
+    input, select {
+      font: inherit;
+      padding: 0.45rem 0.8rem;
+      border: 1.5px solid var(--line);
+      border-radius: 9px;
+      font-size: 0.88rem;
+      background: #fff;
+      transition: all 0.2s ease;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--pri);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+    
+    /* Utilities */
+    .mut { color: var(--mut); }
+    .ltr { direction: ltr; unicode-bidi: plaintext; font-family: -apple-system, BlinkMacSystemFont, monospace; }
+    form.inline { display: inline-block; }
+    .flash {
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .flash.ok { background: var(--ok-bg); color: var(--ok); border: 1px solid rgba(5, 150, 105, 0.2); }
+    .flash.err { background: var(--bad-bg); color: var(--bad); border: 1px solid rgba(225, 29, 72, 0.2); }
+    .banner {
+      background: var(--bad-bg);
+      color: var(--bad);
+      border: 1px solid rgba(225, 29, 72, 0.2);
+      padding: 0.85rem 1.25rem;
+      border-radius: var(--radius);
+      margin-bottom: 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      font-weight: 500;
+    }
+    .mode-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.3rem 0.8rem;
+      border-radius: 8px;
+      background: #eff6ff;
+      color: var(--pri);
+      font-weight: 600;
+      font-size: 0.85rem;
+      border: 1px solid #bfdbfe;
+    }
+    .pager {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-top: 1rem;
+      font-size: 0.88rem;
+      color: var(--mut);
+    }
+    .pager a {
+      color: var(--pri);
+      text-decoration: none;
+      font-weight: 600;
+      padding: 0.3rem 0.7rem;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .pager a:hover {
+      background: #f8fafc;
+    }
+    
+    @media (max-width: 768px) {
+      header { padding: 0.75rem 1rem; }
+      main { padding: 1rem; }
+      .grid { grid-template-columns: repeat(2, 1fr); }
+      th, td { padding: 0.45rem 0.5rem; font-size: 0.82rem; }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="brand-title">
+    <span>📈</span>
+    <span>نبض بازار ۳۶۰</span>
+  </div>
+  <div class="nav-links">
+    {% for ep, label in [('overview','نمای کلی'),('sources','منابع'),('categories','دسته‌ها'),('records','رکوردها'),('review','بازبینی'),('duplicates','تکراری‌ها'),('opps','فرصت‌ها'),('publications','انتشار'),('template_editor','قالب پیام‌ها'),('price_history','تاریخچه'),('raw_messages','پارس‌نشده'),('logs','لاگ‌ها'),('settings_page','تنظیمات')] %}
+      <a href="{{ url_for(ep) }}" class="{{ 'active' if view == ep else '' }}">{{ label }}</a>
+    {% endfor %}
+  </div>
+  <div class="header-user">
+    <span class="user-badge">👤 {{ g.user }} ({{ g.role }})</span>
+    <form method="post" action="{{ url_for('logout') }}" style="display:inline">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <button class="logout-btn">خروج</button>
+    </form>
+  </div>
+</header>
+
+<main>
+  {% for c, m in get_flashed_messages(with_categories=true) %}
+    <div class="flash {{ c }}">{{ '✅' if c=='ok' else '⚠️' }} {{ m }}</div>
+  {% endfor %}
+
+  <div class="page-header">
+    <h2>{{ title }}</h2>
+    {% if view == 'overview' %}
+      <div>
+        حالت انتشار: <span class="mode-badge">⚡ {{ settings.publish_mode }}</span>
+      </div>
+    {% endif %}
+  </div>
+
+  {% macro post(url, label, cls='', extra='') %}
+    <form class="inline" method="post" action="{{ url }}">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">{{ extra|safe }}
+      <button class="{{ cls }}">{{ label }}</button>
+    </form>
+  {% endmacro %}
+
+  {% macro pager() %}
+    <div class="pager">
+      {% if page_no > 1 %}<a href="?page={{ page_no - 1 }}">← قبلی</a>{% endif %}
+      <span>صفحه {{ page_no }}</span>
+      <a href="?page={{ page_no + 1 }}">بعدی →</a>
+    </div>
+  {% endmacro %}
+
+  {% if view == 'overview' %}
+    {% if settings.paused %}
+      <div class="banner">
+        <span>⛔ انتشار خودکار متوقف شده است (توقف اضطراری).</span>
+        {{ post(url_for('emergency_pause'), 'از سرگیری مجدد انتشار', 'pri', '<input type=hidden name=resume value=1>') }}
+      </div>
+    {% else %}
+      {% if g.role != 'viewer' %}
+        <div style="margin-bottom: 1rem;">
+          {{ post(url_for('emergency_pause'), '⛔ توقف اضطراری انتشار', 'bad') }}
+        </div>
+      {% endif %}
+    {% endif %}
+
+    <div class="card" style="margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%); border: 1.5px solid #bfdbfe; border-radius: var(--radius); padding: 1.1rem 1.3rem;">
+      <div style="max-width: 620px;">
+        <div style="font-weight: 700; color: #1e40af; font-size: 1.02rem; display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.3rem;">
+          <span>⚡</span>
+          <span>پایش آنلاین و انتشار دستی بولتن به کانال</span>
+        </div>
+        <p class="mut" style="font-size: 0.86rem; margin: 0; line-height: 1.6;">
+          همزمان با پایش خودکار پس‌زمینه، با فشردن این دکمه سیستم در همان لحظه کانال‌های مبدا را بررسی کرده و آخرین نرخ‌های روز را در قالب بولتن در کانال تلگرام منتشر می‌کند.
+        </p>
+      </div>
+      {% if g.role != 'viewer' %}
+        <form method="post" action="{{ url_for('manual_publish') }}" style="margin: 0;">
+          <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+          <button class="pri" style="padding: 0.75rem 1.5rem; font-weight: 700; font-size: 0.94rem; background: linear-gradient(135deg, #2563eb, #1d4ed8); box-shadow: 0 4px 14px rgba(37,99,235,0.25); border-radius: 8px; white-space: nowrap; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <span>🔄</span>
+            <span>استخراج فوری و انتشار در کانال</span>
+          </button>
+        </form>
+      {% endif %}
+    </div>
+
+    <div class="grid">
+      {% for k, l in [('sources_enabled','منابع فعال'),('sources_failing','منابع دارای مشکل'),('raw_24h','پیام دریافتی ۲۴س'),('unparsed','پیام پارس‌نشده'),('review','نیازمند بازبینی'),('invalid','نامعتبر'),('dups','تکراری'),('opps','فرصت در انتظار'),('pending_pub','در انتظار تأیید'),('queued','در صف ارسال'),('failed_pub','انتشار ناموفق'),('sent_24h','ارسال‌شده ۲۴س'),('errors_24h','خطا ۲۴س')] %}
+        <div class="stat">
+          <b>{{ stats[k] }}</b>
+          <span class="mut">{{ l }}</span>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="card tablewrap">
+      <h3 style="margin-bottom: 1rem; font-size: 1.05rem;">📡 وضعیت منابع پایش بازار</h3>
+      <table>
+        <tr>
+          <th>منبع</th>
+          <th>سلامت</th>
+          <th>آخرین همگام‌سازی</th>
+          <th>آخرین خطا</th>
+        </tr>
+        {% for s in sources %}
+          <tr>
+            <td><b>{{ s.name }}</b> <span class="mut ltr">({{ s.chat_ref }})</span></td>
+            <td>
+              <span class="b {{ s.health }}">{{ s.health }}</span>
+              {% if not s.enabled %}<span class="b">غیرفعال</span>{% endif %}
+            </td>
+            <td class="ltr">{{ s.last_success_at or '—' }}</td>
+            <td style="color: var(--bad); font-size: 0.82rem;">{{ s.last_error or '—' }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+
+  {% elif view == 'sources' %}
+    <div class="card tablewrap">
+      <table>
+        <tr>
+          <th>منبع</th>
+          <th>روش اتصال</th>
+          <th>وضعیت</th>
+          <th>دسته‌ها و تنظیمات</th>
+          <th>عملیات</th>
+        </tr>
+        {% for s in rows %}
+          <tr>
+            <td><b>{{ s.name }}</b><br><span class="mut ltr">{{ s.chat_ref }}</span></td>
+            <td><span class="b">{{ s.access_method }}</span></td>
+            <td><span class="b {{ s.health }}">{{ s.health }}</span> {{ 'فعال' if s.enabled else 'غیرفعال' }}</td>
+            <td>
+              <form method="post" action="{{ url_for('source_edit', sid=s.id) }}" style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+                <input name="categories" value="{{ s.categories|cats }}" placeholder="دسته‌ها" size="14">
+                <input name="reliability" value="{{ s.reliability }}" size="3" title="ضریب اطمینان">
+                <select name="default_unit">
+                  <option value="">بدون واحد</option>
+                  <option value="IRT" {{ 'selected' if s.default_unit=='IRT' }}>تومان</option>
+                  <option value="IRR" {{ 'selected' if s.default_unit=='IRR' }}>ریال</option>
+                </select>
+                <input name="attribution" value="{{ s.attribution or '' }}" placeholder="نام منبع">
+                {% if g.role == 'admin' %}<button class="pri">ذخیره</button>{% endif %}
+              </form>
+            </td>
+            <td>
+              {% if g.role == 'admin' %}
+                {{ post(url_for('source_toggle', sid=s.id), 'تغییر فعال/غیرفعال') }}
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+
+    <div class="card tablewrap">
+      <h3 style="margin-bottom: 0.8rem; font-size: 1.05rem;">📊 عملکرد و دقت منابع</h3>
+      <table>
+        <tr>
+          <th>منبع</th>
+          <th>تعداد رکورد</th>
+          <th>معتبر</th>
+          <th>نامعتبر</th>
+          <th>بازبینی</th>
+          <th>تکراری</th>
+          <th>رد مدیر</th>
+          <th>پارس‌نشده</th>
+          <th>میانگین تأخیر</th>
+        </tr>
+        {% for x in stats %}
+          <tr>
+            <td><b>{{ x.source }}</b></td>
+            <td>{{ x.records }}</td>
+            {% for k in ['valid_rate','invalid_rate','review_rate','duplicate_rate'] %}
+              <td>{{ '%.0f%%'|format(x[k]*100) if x[k] is not none else '—' }}</td>
+            {% endfor %}
+            <td>{{ x.rejected_by_admin }}</td>
+            <td>{{ x.unparsed_messages }}</td>
+            <td>{{ '%.0f دقیقه'|format(x.median_lag_minutes) if x.median_lag_minutes is not none else '—' }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+
+  {% elif view == 'categories' %}
+    <div class="card tablewrap">
+      <table>
+        <tr>
+          <th>کلید</th>
+          <th>نام فارسی</th>
+          <th>تنظیمات وضعیت</th>
+        </tr>
+        {% for c in rows %}
+          <tr>
+            <td class="ltr"><code>{{ c.key }}</code></td>
+            <td><b>{{ c.name_fa }}</b></td>
+            <td>
+              <form method="post" style="display: flex; gap: 1rem; align-items: center;">
+                <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+                <input type="hidden" name="key" value="{{ c.key }}">
+                <label style="cursor: pointer;"><input type="checkbox" name="enabled" {{ 'checked' if c.enabled }}> فعال</label>
+                <label style="cursor: pointer;"><input type="checkbox" name="auto_publish" {{ 'checked' if c.auto_publish }}> انتشار خودکار</label>
+                {% if g.role == 'admin' %}<button class="pri">ذخیره</button>{% endif %}
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+
+  {% elif view in ('records', 'review', 'duplicates') %}
+    {% if view == 'records' %}
+      <form class="card" method="get" style="display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center;">
+        <input name="q" placeholder="جستجوی دارایی یا قیمت..." value="{{ request.args.q or '' }}" style="flex: 1; min-width: 200px;">
+        <select name="status">
+          <option value="">همه‌ی وضعیت‌ها</option>
+          {% for s in ['valid','needs_review','invalid','duplicate','stale','superseded','retracted','rejected'] %}
+            <option {{ 'selected' if request.args.status == s }}>{{ s }}</option>
+          {% endfor %}
+        </select>
+        <input name="category" placeholder="دسته (currency, gold...)" value="{{ request.args.category or '' }}" size="12">
+        <button class="pri">اعمال فیلتر</button>
+        <a class="btn" href="{{ url_for('records_csv', **request.args) }}">📥 خروجی اکسل/CSV</a>
+      </form>
+    {% endif %}
+
+    <div class="card tablewrap">
+      <table>
+        <tr>
+          <th>#</th>
+          <th>زمان ثبت</th>
+          <th>منبع</th>
+          <th>دارایی</th>
+          <th>قیمت</th>
+          <th>واحد</th>
+          <th>وضعیت</th>
+          <th>اطمینان</th>
+          <th>هشدارها</th>
+          {% if view == 'duplicates' %}<th>تکرار از</th>{% endif %}
+          <th>عملیات</th>
+        </tr>
+        {% for r in rows %}
+          <tr>
+            <td><code>{{ r.id }}</code></td>
+            <td class="ltr" style="font-size: 0.8rem;">{{ fmt_time(r.observed_at) }}</td>
+            <td><b>{{ r.source_name }}</b></td>
+            <td>
+              <b>{{ r.asset_name }}</b> {{ r.model or '' }} {{ r.variant or '' }}
+              {% if r.side == 'buy' %}<span class="b ok">خرید</span>
+              {% elif r.side == 'sell' %}<span class="b" style="color: #e11d48; background: #fff1f2;">فروش</span>{% endif %}
+            </td>
+            <td><b>{{ fmt_amount(r) if r.amount_canonical is not none else (r.amount or '—') }}</b></td>
+            <td class="ltr" style="font-size: 0.8rem;">{{ r.unit_rule }}</td>
+            <td><span class="b {{ r.status }}">{{ r.status }}</span></td>
+            <td>{{ '%.2f'|format(r.confidence) }}</td>
+            <td class="ltr" style="font-size: 0.8rem;">
+              {% if view == 'duplicates' %}{{ r.dup_reason }}{% else %}{{ flags_of(r)|join(', ') }}{% endif %}
+            </td>
+            {% if view == 'duplicates' %}<td>#{{ r.dup_of }}</td>{% endif %}
+            <td>
+              {% if r.status == 'needs_review' and g.role != 'viewer' %}
+                {{ post(url_for('record_review', rid=r.id), 'تأیید', 'pri', '<input type=hidden name=decision value=approve>') }}
+                {{ post(url_for('record_review', rid=r.id), 'رد', 'bad', '<input type=hidden name=decision value=reject>') }}
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+    {{ pager() }}
+
+  {% elif view == 'opps' %}
+    {% for o in rows %}
+      <div class="card" style="border-right: 4px solid var(--pri);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <b>{{ o.title }}</b>
+          <div>
+            <span class="b {{ o.status }}">{{ o.status }}</span>
+            <span class="mut" style="font-size: 0.85rem; margin-right: 0.5rem;">امتیاز: {{ o.score }}</span>
+          </div>
+        </div>
+        <p style="margin-bottom: 0.4rem;">{{ o.explanation }}</p>
+        <p class="mut" style="font-size: 0.85rem; margin-bottom: 0.6rem;">{{ o.assumptions }}</p>
+        <ul style="padding-right: 1.2rem; font-size: 0.88rem; color: #475569; margin-bottom: 0.8rem;">
+          {% for x in ev(o).observations %}
+            <li>{{ x.label }}: <b>{{ x.value }}</b> — {{ x.source }} — {{ fmt_time(x.observed_at) }}
+              {% if x.url %} — <a href="{{ x.url }}" target="_blank" rel="noopener">منبع اصلی</a>{% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+        {% if o.status == 'pending' and g.role != 'viewer' %}
+          {{ post(url_for('opp_decide', oid=o.id), 'تأیید و ارسال به صف انتشار', 'pri', '<input type=hidden name=decision value=approve>') }}
+          {{ post(url_for('opp_decide', oid=o.id), 'رد این فرصت', 'bad', '<input type=hidden name=decision value=reject>') }}
+        {% endif %}
+      </div>
+    {% else %}
+      <div class="card" style="text-align: center; color: var(--mut); padding: 2rem;">فرصت آربیتراژی ثبت نشده است.</div>
+    {% endfor %}
+    {{ pager() }}
+
+  {% elif view == 'outbox' %}
+    <div class="card tablewrap">
+      <table>
+        <tr>
+          <th>#</th>
+          <th>نوع پیام</th>
+          <th>دسته</th>
+          <th>وضعیت</th>
+          <th>تلاش</th>
+          <th>پیام خطا</th>
+          <th>شناسه تلگرام</th>
+          <th>متن ارسالی</th>
+          <th>عملیات</th>
+        </tr>
+        {% for o in rows %}
+          <tr>
+            <td><code>{{ o.id }}</code></td>
+            <td><span class="b">{{ o.kind }}</span></td>
+            <td>{{ o.category }}</td>
+            <td><span class="b {{ o.status }}">{{ o.status }}</span></td>
+            <td>{{ o.attempts }}</td>
+            <td style="color: var(--bad); font-size: 0.8rem;">{{ o.last_error or '—' }}</td>
+            <td class="ltr">{{ o.telegram_message_id or '—' }}</td>
+            <td>
+              <details style="cursor: pointer;">
+                <summary style="color: var(--pri); font-weight: 500;">مشاهده پیش‌نمایش</summary>
+                <pre style="white-space: pre-wrap; font-family: inherit; background: #f8fafc; padding: 0.8rem; border-radius: 8px; margin-top: 0.5rem; font-size: 0.85rem;">{{ o.text }}</pre>
+              </details>
+            </td>
+            <td>
+              {% if g.role != 'viewer' %}
+                {% if o.status in ('pending_approval', 'failed', 'uncertain') %}
+                  {{ post(url_for('pub_action', oid=o.id, action='approve'), 'تأیید/صف', 'pri') }}
+                {% endif %}
+                {% if o.status == 'failed' %}
+                  {{ post(url_for('pub_action', oid=o.id, action='retry'), 'ارسال مجدد') }}
+                {% endif %}
+                {% if o.status in ('pending_approval', 'queued', 'failed', 'uncertain') %}
+                  {{ post(url_for('pub_action', oid=o.id, action='cancel'), 'لغو', 'bad') }}
+                {% endif %}
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+    {{ pager() }}
+
+  {% elif view == 'history' %}
+    <form class="card" method="get" style="display: flex; gap: 0.6rem;">
+      <select name="entity_key" style="flex: 1;">
+        {% for k in keys %}
+          <option {{ 'selected' if k == key }}>{{ k }}</option>
+        {% endfor %}
+      </select>
+      <button class="pri">نمایش نمودار</button>
+    </form>
+    {% if svg %}<div class="card">{{ svg|safe }}</div>{% elif key %}<p class="mut">{{ note }}</p>{% endif %}
+    {% if rows %}
+      <div class="card tablewrap">
+        <table>
+          <tr>
+            <th>زمان ثبت</th>
+            <th>منبع</th>
+            <th>قیمت</th>
+            <th>وضعیت</th>
+          </tr>
+          {% for r in rows %}
+            <tr>
+              <td class="ltr">{{ fmt_time(r.observed_at) }}</td>
+              <td><b>{{ r.source_name }}</b></td>
+              <td><b>{{ fmt_amount(r) }}</b></td>
+              <td><span class="b {{ r.status }}">{{ r.status }}</span></td>
+            </tr>
+          {% endfor %}
+        </table>
+      </div>
+    {% endif %}
+
+  {% elif view == 'raw' %}
+    <div class="card tablewrap">
+      <table>
+        <tr>
+          <th>#</th>
+          <th>منبع</th>
+          <th>وضعیت پردازش</th>
+          <th>یادداشت خطا</th>
+          <th>متن پیام خام</th>
+          <th>عملیات</th>
+        </tr>
+        {% for r in rows %}
+          <tr>
+            <td><code>{{ r.id }}</code></td>
+            <td><b>{{ r.source_name }}</b></td>
+            <td><span class="b">{{ r.parse_status }}</span></td>
+            <td style="font-size: 0.8rem; color: var(--mut);">{{ r.parse_note }}</td>
+            <td><pre style="white-space: pre-wrap; margin: 0; font-family: inherit; font-size: 0.84rem;">{{ r.text[:300] }}</pre></td>
+            <td>
+              {% if g.role != 'viewer' %}
+                {{ post(url_for('raw_reprocess', rid=r.id), 'پردازش مجدد', 'pri') }}
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+    {{ pager() }}
+
+  {% elif view == 'logs' %}
+    <div class="card" style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem;">
+      <a class="btn" href="?level=ERROR">فقط خطاها (ERROR)</a>
+      <a class="btn" href="?">همه لاگ‌ها</a>
+    </div>
+    <div class="card tablewrap">
+      <table>
+        <tr>
+          <th>زمان (UTC)</th>
+          <th>سطح</th>
+          <th>بخش</th>
+          <th>پیام</th>
+          <th>شناسه همبستگی</th>
+        </tr>
+        {% for r in rows %}
+          <tr>
+            <td class="ltr" style="font-size: 0.8rem;">{{ r.ts }}</td>
+            <td><span class="b {{ r.level }}">{{ r.level }}</span></td>
+            <td><code>{{ r.component }}</code></td>
+            <td style="font-size: 0.86rem;">{{ r.message }}</td>
+            <td class="ltr" style="font-size: 0.8rem;">{{ r.correlation_id or '' }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+    {{ pager() }}
+
+  {% elif view == 'templates' %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 1.5rem; align-items: start;">
+      <!-- Preview Column -->
+      <div class="card" style="background: linear-gradient(180deg, #f0f4f8 0%, #e2e8f0 100%); padding: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h3 style="font-size: 1.1rem; color: #1e293b;">📱 پیش‌نمایش در تلگرام</h3>
+          <span class="b ok">کانال: {{ cfg_settings.publish_chat_id }}</span>
+        </div>
+        
+        <!-- Telegram Chat Bubble -->
+        <div style="background: #ffffff; border-radius: 16px 16px 2px 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); padding: 1.25rem; margin-bottom: 1.2rem; font-size: 0.92rem; line-height: 1.8; border: 1px solid #e2e8f0;">
+          <pre style="white-space: pre-wrap; font-family: inherit; margin: 0; color: #0f172a;">{{ sample_quote|safe }}</pre>
+          <div style="text-align: left; font-size: 0.75rem; color: #94a3b8; margin-top: 0.5rem; display: flex; justify-content: flex-end; align-items: center; gap: 0.3rem;">
+            <span>15:40</span>
+            <span style="color: #3b82f6;">✓✓</span>
+          </div>
+        </div>
+
+        <!-- Send Test Post Form -->
+        <form method="post">
+          <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+          <input type="hidden" name="action" value="send_test">
+          <input type="hidden" name="sample_text" value="{{ sample_quote }}">
+          <input type="hidden" name="target_chat" value="{{ cfg_settings.publish_chat_id }}">
+          <button class="pri" style="width: 100%; justify-content: center; padding: 0.75rem; font-size: 0.95rem;">
+            🚀 ارسال همین پیش‌نمایش به کانال تلگرام
+          </button>
+        </form>
+
+        <form method="post" action="{{ url_for('manual_publish') }}" style="margin-top: 0.8rem;">
+          <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+          <button class="btn" style="width: 100%; justify-content: center; padding: 0.75rem; font-size: 0.92rem; background: #ffffff; border: 1.5px solid #2563eb; color: #2563eb; font-weight: 600; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+            <span>🔄</span>
+            <span>استخراج فوری از منابع و ارسال بولتن کامل به کانال</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Settings Column -->
+      <div class="card">
+        <h3 style="font-size: 1.1rem; margin-bottom: 1.2rem; color: #0f172a;">⚙️ شخصی‌سازی متن و قالب پیام</h3>
+        <form method="post">
+          <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+          <input type="hidden" name="action" value="save">
+
+          <div style="margin-bottom: 1.2rem;">
+            <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem;">
+              متن امضای کانال (پاورقی هر پیام)
+            </label>
+            <textarea name="brand_line" rows="3" style="width: 100%; padding: 0.6rem; border: 1.5px solid var(--line); border-radius: 10px; font: inherit; font-size: 0.9rem;">{{ cfg_settings.brand_line }}</textarea>
+            <p class="mut" style="font-size: 0.8rem; margin-top: 0.3rem;">این متن در انتهای تمامی پیام‌ها قرار می‌گیرد (نام برند، لینک عضویت، آیدی).</p>
+          </div>
+
+          <div style="margin-bottom: 1.2rem;">
+            <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem;">
+              واحد نمایش قیمت‌ها
+            </label>
+            <select name="display_unit" style="width: 100%;">
+              <option value="toman" {{ 'selected' if cfg_settings.display_unit == 'toman' }}>تومان (پیش‌فرض ایران)</option>
+              <option value="rial" {{ 'selected' if cfg_settings.display_unit == 'rial' }}>ریال</option>
+            </select>
+          </div>
+
+          <div style="margin-bottom: 1.2rem;">
+            <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem;">
+              موقعیت ویرگول جداکننده ارقام
+            </label>
+            <select name="thousands_separator" style="width: 100%;">
+              <option value="," {{ 'selected' if cfg_settings.thousands_separator == ',' }}>پایین عدد (ویرگول استاندارد: ۲۴,۰۰۰ — پیشنهادی)</option>
+              <option value="٬" {{ 'selected' if cfg_settings.thousands_separator == '٬' }}>بالای عدد (جداکننده عربی: ۲۴٬۰۰۰)</option>
+            </select>
+            <p class="mut" style="font-size: 0.8rem; margin-top: 0.3rem;">نمایش ویرگول در پایین عدد به خوانایی قیمت‌ها در فونت‌های فارسی تلگرام کمک می‌کند.</p>
+          </div>
+
+          <div style="margin-bottom: 1.2rem; background: var(--bg); padding: 0.8rem 1rem; border-radius: 8px; border: 1px solid var(--line);">
+            <div style="font-weight: 600; font-size: 0.88rem; margin-bottom: 0.6rem; color: #0f172a;">
+              تنظیمات نمایش منبع و اعتبارسنجی در کانال
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 0.6rem; font-size: 0.88rem;">
+              <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                <input type="checkbox" name="show_source" value="1" {{ 'checked' if cfg_settings.show_source }}>
+                نمایش نام کانال منبع در پیام (• منبع: ...)
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                <input type="checkbox" name="show_verification" value="1" {{ 'checked' if cfg_settings.show_verification }}>
+                نمایش وضعیت هم‌خوانی و تأیید منبع (• وضعیت: هم‌خوان با...)
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                <input type="checkbox" name="show_source_url" value="1" {{ 'checked' if cfg_settings.show_source_url }}>
+                نمایش لینک و دکمه شیشه‌ای منبع اصلی پیام
+              </label>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem;">
+              حداقل درصد نوسان برای ارسال هشدار فوری (٪)
+            </label>
+            <input type="number" step="0.1" name="alert_change_pct" value="{{ cfg_settings.alert_change_pct }}" style="width: 100%;">
+            <p class="mut" style="font-size: 0.8rem; margin-top: 0.3rem;">اگر قیمت نسبت به ساعت قبل بیش از این مقدار تغییر کند، هشدار فوری ارسال می‌شود.</p>
+          </div>
+
+          {% if g.role != 'viewer' %}
+            <button class="pri" style="padding: 0.7rem 1.5rem; font-weight: 600;">💾 ذخیره‌ی تغییرات قالب</button>
+          {% endif %}
+        </form>
+      </div>
+    </div>
+
+  {% elif view == 'settings' %}
+    <form class="card" method="post">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <div class="tablewrap">
+        <table>
+          <tr>
+            <th style="width: 35%;">کلید تنظیم</th>
+            <th>مقدار فعلی</th>
+          </tr>
+          {% for k, v in s.items() %}
+            <tr>
+              <td class="ltr"><b>{{ k }}</b></td>
+              <td>
+                <input name="{{ k }}" value="{{ v if v is string or v is number else json.dumps(v, ensure_ascii=False) }}" style="width: 100%; max-width: 500px;" {{ '' if g.role == 'admin' else 'readonly' }}>
+              </td>
+            </tr>
+          {% endfor %}
+        </table>
+      </div>
+      {% if g.role == 'admin' %}
+        <div style="margin-top: 1rem;">
+          <button class="pri" style="padding: 0.6rem 1.4rem;">ذخیره‌ی تغییرات تنظیمات</button>
+        </div>
+      {% endif %}
+    </form>
+  {% endif %}
+</main>
+</body>
+</html>

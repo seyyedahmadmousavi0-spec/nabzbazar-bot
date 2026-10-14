@@ -1,0 +1,115 @@
+{
+  "_note": "Automated ingestion via Telegram Web Previews. Default unit IRT (toman).",
+  "sources": [
+    {
+      "key": "do_l4",
+      "name": "DO_L4",
+      "source_type": "telegram_channel",
+      "access_method": "telegram_web",
+      "enabled": true,
+      "chat_ref": "@DO_L4",
+      "categories": [
+        "currency",
+        "gold",
+        "coin",
+        "crypto"
+      ],
+      "parser": "generic",
+      "default_unit": "IRT",
+      "reliability": 0.85,
+      "attribution": "DO_L4",
+      "url_template": "https://t.me/{username}/{message_id}",
+      "restrictions": "Open Telegram Channel",
+      "retention_days": 365,
+      "poll_interval_s": 30
+    },
+    {
+      "key": "nobitexprices",
+      "name": "Nobitex Prices",
+      "source_type": "telegram_channel",
+      "access_method": "telegram_web",
+      "enabled": true,
+      "chat_ref": "@nobitexprices",
+      "categories": [
+        "currency",
+        "gold",
+        "coin",
+        "crypto"
+      ],
+      "parser": "generic",
+      "default_unit": "IRT",
+      "reliability": 0.9,
+      "attribution": "Nobitex Prices",
+      "url_template": "https://t.me/{username}/{message_id}",
+      "restrictions": "Open Telegram Channel",
+      "retention_days": 365,
+      "poll_interval_s": 30
+    },
+    {
+      "key": "hareta_dollar_bloe",
+      "name": "Hareta Dollar",
+      "source_type": "telegram_channel",
+      "access_method": "telegram_web",
+      "enabled": true,
+      "chat_ref": "@Hareta_Dollar_Bloe",
+      "categories": [
+        "currency",
+        "gold",
+        "coin",
+        "crypto"
+      ],
+      "parser": "generic",
+      "default_unit": "IRT",
+      "reliability": 0.85,
+      "attribution": "Hareta Dollar",
+      "url_template": "https://t.me/{username}/{message_id}",
+      "restrictions": "Open Telegram Channel",
+      "retention_days": 365,
+      "poll_interval_s": 30
+    },
+    {
+      "key": "dollarferdowsi",
+      "name": "Dollar Ferdowsi",
+      "source_type": "telegram_channel",
+      "access_method": "telegram_web",
+      "enabled": true,
+      "chat_ref": "@DollarFerdowsi",
+      "categories": [
+        "currency",
+        "gold",
+        "coin",
+        "crypto"
+      ],
+      "parser": "generic",
+      "default_unit": "IRT",
+      "reliability": 0.85,
+      "attribution": "Dollar Ferdowsi",
+      "url_template": "https://t.me/{username}/{message_id}",
+      "restrictions": "Open Telegram Channel",
+      "retention_days": 365,
+      "poll_interval_s": 30
+    },
+    {
+      "key": "exchange_mozafari",
+      "name": "Exchange Mozafari",
+      "source_type": "telegram_channel",
+      "access_method": "telegram_web",
+      "enabled": true,
+      "chat_ref": "@Exchange_Mozafari",
+      "categories": [
+        "currency",
+        "gold",
+        "coin",
+        "crypto"
+      ],
+      "parser": "generic",
+      "default_unit": "IRT",
+      "reliability": 0.85,
+      "attribution": "Exchange Mozafari",
+      "url_template": "https://t.me/{username}/{message_id}",
+      "restrictions": "Open Telegram Channel",
+      "retention_days": 365,
+      "poll_interval_s": 30
+    }
+  ]
+}

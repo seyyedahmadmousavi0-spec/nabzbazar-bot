@@ -1,0 +1,23 @@
+{
+  "_note": "Example only. Replace with sources you have an arrangement with. chat_ref is the channel @username or numeric id (-100...). Load with: python -m marketintel load-sources config/sources.json",
+  "sources": [
+    {
+      "key": "example_fx_channel",
+      "name": "Example FX channel",
+      "source_type": "telegram_channel",
+      "access_method": "bot_api",
+      "enabled": false,
+      "chat_ref": "@example_channel",
+      "categories": ["currency", "gold", "coin"],
+      "parser": "generic",
+      "default_unit": null,
+      "reliability": 0.7,
+      "attribution": "Example FX channel",
+      "url_template": "https://t.me/{username}/{message_id}",
+      "restrictions": "Agreed reuse terms go here (e.g. attribution required; no media reposting).",
+      "retention_days": 365,
+      "rate_limit_per_min": 20,
+      "poll_interval_s": 30
+    }
+  ]
+}
