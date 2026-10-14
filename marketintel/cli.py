@@ -35,6 +35,15 @@ def _conn(cfg: Config) -> sqlite3.Connection:
             admin_pass = os.environ.get("MI_ADMIN_PASSWORD", "admin123456")
             c.execute("INSERT OR IGNORE INTO users(username,password_hash,role,created_at) VALUES (?,?,?,?)",
                       ("admin", generate_password_hash(admin_pass), "admin", iso(utcnow())))
+        if not c.execute("SELECT 1 FROM settings WHERE key='auto_bulletin_interval_minutes'").fetchone():
+            db.set_setting(c, "auto_bulletin_interval_minutes", 15)
+            db.set_setting(c, "publish_mode", "auto")
+            db.set_setting(c, "show_source", 0)
+            db.set_setting(c, "show_verification", 0)
+            db.set_setting(c, "show_source_url", 0)
+            db.set_setting(c, "thousands_separator", ",")
+            db.set_setting(c, "brand_line", "📈 نبض بازار | @nabzbazar360")
+            db.set_setting(c, "auto_categories", ["currency", "gold", "coin", "crypto"])
     except Exception as exc:
         logging.getLogger(__name__).warning("auto-bootstrap warning: %s", exc)
     return c
