@@ -41,8 +41,8 @@ class Config:
             bot_token=g("MI_TELEGRAM_BOT_TOKEN", ""),
             publish_chat_id=g("MI_PUBLISH_CHAT_ID", ""),
             live_publish=g("MI_LIVE_PUBLISH", "0") == "1",
-            admin_secret_key=g("MI_ADMIN_SECRET_KEY", ""),
-            admin_host=g("MI_ADMIN_HOST", "0.0.0.0" if g("PORT") else "127.0.0.1"),
+            admin_secret_key=g("MI_ADMIN_SECRET_KEY", "nabzbazar360-secret-key-default-2026"),
+            admin_host=g("MI_ADMIN_HOST", "0.0.0.0" if (g("PORT") or g("RENDER")) else "127.0.0.1"),
             admin_port=int(g("PORT") or g("MI_ADMIN_PORT", "8080")),
             cookie_secure=g("MI_ADMIN_COOKIE_SECURE", "0") == "1",
         )
