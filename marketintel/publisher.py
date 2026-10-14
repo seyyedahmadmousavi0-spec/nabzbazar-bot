@@ -198,6 +198,14 @@ def render_market_bulletin(conn: sqlite3.Connection, tzname: str = "Asia/Tehran"
         "────────────────────"
     ]
 
+    PRIORITY = {
+        "usd": 10, "eur": 12, "gbp": 14, "aed": 16, "try": 18,
+        "gold18": 20, "gold_melted": 22, "mesghal": 24, "gold_ounce": 26,
+        "coin_emami": 30, "coin_bahar": 32, "coin_half": 34, "coin_quarter": 36, "coin_gerami": 38,
+        "usdt": 40, "btc": 42, "eth": 44,
+    }
+    latest_items.sort(key=lambda x: (PRIORITY.get(x["asset_key"], 99), -(x["amount"] or 0)))
+
     currencies = []
     gold_coins = []
     cryptos = []
@@ -226,7 +234,7 @@ def render_market_bulletin(conn: sqlite3.Connection, tzname: str = "Asia/Tehran"
 
     if gold_coins:
         lines.append(f"{RLM}🪙 <b>طلا و مسکوکات:</b>")
-        lines.extend(gold_coins[:4])
+        lines.extend(gold_coins[:7])
         lines.append("")
 
     if cryptos:
