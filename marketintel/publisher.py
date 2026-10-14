@@ -267,6 +267,8 @@ def initial_status(conn: sqlite3.Connection, kind: str, category: str, confidenc
     mode = get_setting(conn, "publish_mode")
     if mode == "manual":
         return "pending_approval"
+    if kind in ("bulletin", "summary") and mode in ("auto", "auto_all", "auto_categories"):
+        return "queued"
     if kind == "opportunity":
         if get_setting(conn, "auto_approve_opportunities") == 1 or mode == "auto_all":
             return "queued"
@@ -335,6 +337,28 @@ def schedule_summaries(conn: sqlite3.Connection, now: datetime, tzname: str) -> 
             if oid:
                 ids.append(oid)
     return ids
+
+
+def schedule_bulletin(conn: sqlite3.Connection, now: datetime, tzname: str) -> int | None:
+    interval_m = int(get_setting(conn, "auto_bulletin_interval_minutes") or 0)
+    if interval_m <= 0:
+        return None
+    mode = get_setting(conn, "publish_mode")
+    if mode not in ("auto", "auto_all", "auto_categories"):
+        return None
+    cutoff = iso(now - timedelta(minutes=interval_m))
+    recent = conn.execute(
+        "SELECT id FROM outbox WHERE kind='bulletin' AND created_at > ? AND status != 'cancelled'",
+        (cutoff,)
+    ).fetchone()
+    if recent is not None:
+        return None
+    text = render_market_bulletin(conn, tzname, now)
+    if not text:
+        return None
+    slot = now.strftime("%Y%m%d%H%M")
+    return enqueue(conn, kind="bulletin", category="all", text=text, buttons=[],
+                   key=f"bulletin:{slot}", record_ids=[], confidence=1.0, now=now)
 
 
 def approve(conn: sqlite3.Connection, outbox_id: int, actor: str) -> bool:

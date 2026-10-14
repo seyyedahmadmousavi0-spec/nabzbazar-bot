@@ -908,6 +908,20 @@
             <p class="mut" style="font-size: 0.8rem; margin-top: 0.3rem;">اگر قیمت نسبت به ساعت قبل بیش از این مقدار تغییر کند، هشدار فوری ارسال می‌شود.</p>
           </div>
 
+          <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem;">
+              فاصله زمانی ارسال خودکار بولتن جامع به کانال
+            </label>
+            <select name="auto_bulletin_interval_minutes" style="width: 100%;">
+              <option value="0" {{ 'selected' if cfg_settings.auto_bulletin_interval_minutes == 0 }}>غیرفعال (فقط هنگام نوسان شدید یا ارسال دستی)</option>
+              <option value="15" {{ 'selected' if cfg_settings.auto_bulletin_interval_minutes == 15 }}>هر ۱۵ دقیقه یک‌بار</option>
+              <option value="30" {{ 'selected' if cfg_settings.auto_bulletin_interval_minutes == 30 }}>هر ۳۰ دقیقه یک‌بار (پیشنهادی)</option>
+              <option value="60" {{ 'selected' if cfg_settings.auto_bulletin_interval_minutes == 60 }}>هر ۱ ساعت یک‌بار</option>
+              <option value="120" {{ 'selected' if cfg_settings.auto_bulletin_interval_minutes == 120 }}>هر ۲ ساعت یک‌بار</option>
+            </select>
+            <p class="mut" style="font-size: 0.8rem; margin-top: 0.3rem;">ربات در این بازه زمانی مشخص، آخرین قیمت‌های بازار را جمع‌بندی کرده و بولتن جدید را خودکار در کانال قرار می‌دهد.</p>
+          </div>
+
           {% if g.role != 'viewer' %}
             <button class="pri" style="padding: 0.7rem 1.5rem; font-weight: 600;">💾 ذخیره‌ی تغییرات قالب</button>
           {% endif %}

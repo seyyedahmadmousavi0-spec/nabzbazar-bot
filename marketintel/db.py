@@ -44,6 +44,7 @@ DEFAULT_SETTINGS: dict[str, Any] = {
     "show_source_url": 1,
     "show_verification": 1,
     "thousands_separator": "٬",
+    "auto_bulletin_interval_minutes": 0,
 }
 
 
