@@ -16,3 +16,4 @@ RUN mkdir -p data
 EXPOSE 8080
 
 CMD ["python", "-m", "marketintel", "run-all", "--interval", "20"]
+
