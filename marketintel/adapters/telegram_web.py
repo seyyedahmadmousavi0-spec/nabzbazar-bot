@@ -86,7 +86,7 @@ def extract_web_messages(html: str, username: str) -> list[RawInput]:
 
 
 def poll_source(conn: sqlite3.Connection, source_row: sqlite3.Row, session: requests.Session | None = None,
-                now: datetime | None = None, tzname: str = "Asia/Tehran", timeout: int = 15) -> dict[str, int]:
+                now: datetime | None = None, tzname: str = "Asia/Tehran", timeout: int = 25) -> dict[str, int]:
     s = session or requests.Session()
     stats = {"new": 0, "edit": 0, "unchanged": 0}
     chat_ref = (source_row["chat_ref"] or "").lstrip("@")
@@ -94,9 +94,22 @@ def poll_source(conn: sqlite3.Connection, source_row: sqlite3.Row, session: requ
         return stats
         
     url = f"https://t.me/s/{chat_ref}"
-    resp = s.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}, timeout=timeout)
-    if resp.status_code != 200:
-        raise ConnectionError(f"HTTP {resp.status_code} fetching {url}")
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"}
+    resp = None
+    for attempt in range(2):
+        try:
+            resp = s.get(url, headers=headers, timeout=timeout)
+            if resp.status_code == 200:
+                break
+        except requests.RequestException:
+            if attempt == 1:
+                raise
+            import time
+            time.sleep(1)
+
+    if resp is None or resp.status_code != 200:
+        code = resp.status_code if resp else "unknown"
+        raise ConnectionError(f"HTTP {code} fetching {url}")
         
     messages = extract_web_messages(resp.text, chat_ref)
     cursor = int(source_row["cursor"] or 0)
@@ -122,7 +135,7 @@ def poll_source(conn: sqlite3.Connection, source_row: sqlite3.Row, session: requ
 
 
 def poll_once(conn: sqlite3.Connection, now: datetime | None = None, tzname: str = "Asia/Tehran",
-              session: requests.Session | None = None, timeout: int = 15) -> dict[str, int]:
+              session: requests.Session | None = None, timeout: int = 25) -> dict[str, int]:
     totals = {"sources": 0, "new": 0, "edit": 0, "unchanged": 0}
     sources = enabled_sources(conn, "telegram_web")
     if not sources:

@@ -68,7 +68,7 @@ def set_enabled(conn: sqlite3.Connection, source_id: int, enabled: bool, actor: 
 
 
 def mark_success(conn: sqlite3.Connection, source_id: int) -> None:
-    conn.execute("UPDATE sources SET last_success_at=?, health='ok', consecutive_failures=0 WHERE id=?",
+    conn.execute("UPDATE sources SET last_success_at=?, health='ok', consecutive_failures=0, last_error=NULL WHERE id=?",
                  (iso(utcnow()), source_id))
 
 
