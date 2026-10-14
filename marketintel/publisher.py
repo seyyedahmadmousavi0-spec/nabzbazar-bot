@@ -448,10 +448,10 @@ def initial_status(conn: sqlite3.Connection, kind: str, category: str, confidenc
     mode = get_setting(conn, "publish_mode")
     if mode == "manual":
         return "pending_approval"
-    if kind in ("bulletin", "summary") and mode in ("auto", "auto_all", "auto_categories"):
+    if kind in ("bulletin", "car_bulletin", "summary") and mode in ("auto", "auto_all", "auto_categories"):
         return "queued"
-    if kind == "opportunity":
-        if get_setting(conn, "auto_approve_opportunities") == 1 or mode == "auto_all":
+    if kind in ("opportunity", "car_announcement"):
+        if get_setting(conn, "auto_approve_opportunities") == 1 or mode in ("auto", "auto_all"):
             return "queued"
         return "pending_approval"
     conf_ok = confidence is not None and confidence >= float(get_setting(conn, "min_auto_confidence"))
@@ -540,6 +540,35 @@ def schedule_bulletin(conn: sqlite3.Connection, now: datetime, tzname: str) -> i
     slot = now.strftime("%Y%m%d%H%M")
     return enqueue(conn, kind="bulletin", category="all", text=text, buttons=[],
                    key=f"bulletin:{slot}", record_ids=[], confidence=1.0, now=now)
+
+
+def schedule_car_bulletin(conn: sqlite3.Connection, now: datetime, tzname: str) -> int | None:
+    interval_h = int(get_setting(conn, "auto_car_bulletin_interval_hours") or 0)
+    if interval_h <= 0:
+        return None
+    mode = get_setting(conn, "publish_mode")
+    if mode not in ("auto", "auto_all", "auto_categories"):
+        return None
+    if mode == "auto_categories" and "car" not in get_setting(conn, "auto_categories"):
+        return None
+    cutoff = iso(now - timedelta(hours=interval_h))
+    recent = conn.execute(
+        "SELECT id FROM outbox WHERE kind='car_bulletin' AND created_at > ? AND status != 'cancelled'",
+        (cutoff,)
+    ).fetchone()
+    if recent is not None:
+        return None
+    has_cars = conn.execute(
+        "SELECT 1 FROM records WHERE category='car' AND amount_canonical IS NOT NULL AND amount >= 100000000 LIMIT 1"
+    ).fetchone()
+    if not has_cars:
+        return None
+    text = render_car_bulletin(conn, tzname, now)
+    if not text:
+        return None
+    slot = now.strftime("%Y%m%d%H%M")
+    return enqueue(conn, kind="car_bulletin", category="car", text=text, buttons=[],
+                   key=f"car_bulletin:{slot}", record_ids=[], confidence=1.0, now=now)
 
 
 def approve(conn: sqlite3.Connection, outbox_id: int, actor: str) -> bool:

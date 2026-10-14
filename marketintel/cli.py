@@ -43,7 +43,9 @@ def _conn(cfg: Config) -> sqlite3.Connection:
             db.set_setting(c, "show_source_url", 0)
             db.set_setting(c, "thousands_separator", ",")
             db.set_setting(c, "brand_line", "📈 نبض بازار | @nabzbazar360")
-            db.set_setting(c, "auto_categories", ["currency", "gold", "coin", "crypto"])
+            db.set_setting(c, "auto_categories", ["currency", "gold", "coin", "crypto", "car"])
+        if not c.execute("SELECT 1 FROM settings WHERE key='auto_car_bulletin_interval_hours'").fetchone():
+            db.set_setting(c, "auto_car_bulletin_interval_hours", 6)
     except Exception as exc:
         logging.getLogger(__name__).warning("auto-bootstrap warning: %s", exc)
     return c

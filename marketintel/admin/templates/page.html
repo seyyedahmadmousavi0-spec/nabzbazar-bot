@@ -921,7 +921,7 @@
 
           <div style="margin-bottom: 1.5rem;">
             <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem;">
-              فاصله زمانی ارسال خودکار بولتن جامع به کانال
+              فاصله زمانی ارسال خودکار بولتن جامع ارز و طلا به کانال
             </label>
             <select name="auto_bulletin_interval_minutes" style="width: 100%;">
               <option value="0" {{ 'selected' if cfg_settings.auto_bulletin_interval_minutes == 0 }}>غیرفعال (فقط هنگام نوسان شدید یا ارسال دستی)</option>
@@ -930,7 +930,22 @@
               <option value="60" {{ 'selected' if cfg_settings.auto_bulletin_interval_minutes == 60 }}>هر ۱ ساعت یک‌بار</option>
               <option value="120" {{ 'selected' if cfg_settings.auto_bulletin_interval_minutes == 120 }}>هر ۲ ساعت یک‌بار</option>
             </select>
-            <p class="mut" style="font-size: 0.8rem; margin-top: 0.3rem;">ربات در این بازه زمانی مشخص، آخرین قیمت‌های بازار را جمع‌بندی کرده و بولتن جدید را خودکار در کانال قرار می‌دهد.</p>
+            <p class="mut" style="font-size: 0.8rem; margin-top: 0.3rem;">ربات در این بازه زمانی مشخص، آخرین قیمت‌های ارز و طلا و سکه را جمع‌بندی کرده و بولتن جدید را خودکار در کانال قرار می‌دهد.</p>
+          </div>
+
+          <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem;">
+              فاصله زمانی ارسال خودکار بولتن تخصصی بازار خودرو به کانال
+            </label>
+            <select name="auto_car_bulletin_interval_hours" style="width: 100%;">
+              <option value="0" {{ 'selected' if cfg_settings.auto_car_bulletin_interval_hours == 0 }}>غیرفعال (فقط ارسال دستی یا اطلاعیه‌های فروش)</option>
+              <option value="2" {{ 'selected' if cfg_settings.auto_car_bulletin_interval_hours == 2 }}>هر ۲ ساعت یک‌بار</option>
+              <option value="4" {{ 'selected' if cfg_settings.auto_car_bulletin_interval_hours == 4 }}>هر ۴ ساعت یک‌بار</option>
+              <option value="6" {{ 'selected' if cfg_settings.auto_car_bulletin_interval_hours == 6 }}>هر ۶ ساعت یک‌بار (پیشنهادی)</option>
+              <option value="12" {{ 'selected' if cfg_settings.auto_car_bulletin_interval_hours == 12 }}>هر ۱۲ ساعت یک‌بار</option>
+              <option value="24" {{ 'selected' if cfg_settings.auto_car_bulletin_interval_hours == 24 }}>روزی یک‌بار (۲۴ ساعت)</option>
+            </select>
+            <p class="mut" style="font-size: 0.8rem; margin-top: 0.3rem;">ربات در این بازه مشخص، آخرین قیمت‌های دسته‌بندی‌شده ۴ بخش خودرویی را در قالب بولتن جامع خودرو به کانال ارسال می‌کند.</p>
           </div>
 
           {% if g.role != 'viewer' %}

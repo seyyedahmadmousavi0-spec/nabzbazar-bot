@@ -45,6 +45,7 @@ DEFAULT_SETTINGS: dict[str, Any] = {
     "show_verification": 1,
     "thousands_separator": "٬",
     "auto_bulletin_interval_minutes": 0,
+    "auto_car_bulletin_interval_hours": 0,
 }
 
 

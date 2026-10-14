@@ -55,6 +55,7 @@ def run_cycle(conn: sqlite3.Connection, cfg: Config, client: bot_api.BotClient |
     with tx(conn):
         publisher.schedule_summaries(conn, now, cfg.timezone)
         publisher.schedule_bulletin(conn, now, cfg.timezone)
+        publisher.schedule_car_bulletin(conn, now, cfg.timezone)
         opportunities.expire_old(conn, now)
     out["publish"] = publisher.dispatch_due(conn, sender, cfg.publish_chat_id, now, cfg.timezone)
     return out

@@ -73,9 +73,9 @@ def detect_car_announcement(raw_text: str, conn: sqlite3.Connection | None = Non
                         market_price = float(amt)
                     try:
                         n_val = float(new_val)
-                        if market_price > n_val:
+                        if market_price is not None and market_price > n_val:
                             profit_margin = market_price - n_val
-                    except ValueError:
+                    except (ValueError, TypeError):
                         pass
 
             return {

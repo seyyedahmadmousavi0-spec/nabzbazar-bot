@@ -62,3 +62,51 @@ class CarFeaturesTest(unittest.TestCase):
         self.assertIn("تویوتا", bulletin)
         self.assertIn("وانت، پیکاپ و خودروهای تجاری / سنگین", bulletin)
         self.assertIn("کشنده فوتون", bulletin)
+
+    def test_schedule_car_bulletin(self):
+        import marketintel.db as db
+        from marketintel.publisher import schedule_car_bulletin
+        conn = make_db()
+        db.set_setting(conn, "publish_mode", "auto")
+
+        # 1. auto_car_bulletin_interval_hours is 0 -> should not schedule
+        db.set_setting(conn, "auto_car_bulletin_interval_hours", 0)
+        self.assertIsNone(schedule_car_bulletin(conn, NOW, "Asia/Tehran"))
+
+        # 2. auto_car_bulletin_interval_hours is 6, but no car records -> should not schedule
+        db.set_setting(conn, "auto_car_bulletin_interval_hours", 6)
+        self.assertIsNone(schedule_car_bulletin(conn, NOW, "Asia/Tehran"))
+
+        # 3. Add car records -> should schedule and return outbox ID
+        sid = add_source(conn, "car_src")
+        post(conn, sid, "1", "تارا(V4)توربو⬅️3.900")
+        outbox_id = schedule_car_bulletin(conn, NOW, "Asia/Tehran")
+        self.assertIsNotNone(outbox_id)
+
+        # Verify queued in outbox
+        row = conn.execute("SELECT * FROM outbox WHERE id=?", (outbox_id,)).fetchone()
+        self.assertEqual(row["kind"], "car_bulletin")
+        self.assertEqual(row["category"], "car")
+        self.assertEqual(row["status"], "queued")
+
+        # 4. Same interval window -> should not schedule duplicate
+        self.assertIsNone(schedule_car_bulletin(conn, NOW, "Asia/Tehran"))
+
+    def test_profit_margin_with_db_records(self):
+        conn = make_db()
+        sid = add_source(conn, "car_src")
+        # free market price is 7,440,000,000
+        post(conn, sid, "1", "فیدلیتی الیت⬅️7.440")
+
+        text = """🔴 افزایش قیمت فیدلیتی الیت
+▪️قیمت قبلی: 5,176,000,000 تومان
+▪️قیمت جدید: 6,458,000,000 تومان"""
+        ann = detect_car_announcement(text, conn)
+        self.assertIsNotNone(ann)
+        self.assertEqual(ann["kind"], "factory_price_change")
+        self.assertIsNotNone(ann["market_price"])
+        self.assertIsNotNone(ann["profit_margin"])
+        self.assertGreater(ann["profit_margin"], 0)
+        rendered = render_car_announcement(ann, "@nabzbazar360")
+        self.assertIn("سود ثبت‌نام", rendered)
+

@@ -377,6 +377,11 @@ def create_app(cfg: Config, conn: sqlite3.Connection | None = None) -> Flask:
                 except ValueError:
                     interval_m = 30
                 set_setting(d, "auto_bulletin_interval_minutes", interval_m)
+                try:
+                    interval_car_h = int(request.form.get("auto_car_bulletin_interval_hours", "6"))
+                except ValueError:
+                    interval_car_h = 6
+                set_setting(d, "auto_car_bulletin_interval_hours", interval_car_h)
                 flash("تنظیمات قالب با موفقیت ذخیره شد.", "ok")
                 return redirect(url_for("template_editor"))
             elif action == "send_test":
@@ -410,6 +415,7 @@ def create_app(cfg: Config, conn: sqlite3.Connection | None = None) -> Flask:
             "show_verification": get_setting(d, "show_verification"),
             "show_source_url": get_setting(d, "show_source_url"),
             "auto_bulletin_interval_minutes": get_setting(d, "auto_bulletin_interval_minutes") or 30,
+            "auto_car_bulletin_interval_hours": get_setting(d, "auto_car_bulletin_interval_hours") if get_setting(d, "auto_car_bulletin_interval_hours") is not None else 6,
             "publish_chat_id": cfg.publish_chat_id or "@nabzbazar360"
         }
         return page("قالب و پیش‌نمایش پیام‌ها", view="templates", sample_quote=sample_quote, cfg_settings=settings_dict)
