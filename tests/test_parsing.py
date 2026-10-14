@@ -68,6 +68,17 @@ class Parsing(unittest.TestCase):
         it = P("پژو ۲۰۶ ۴۸۰ میلیون تومان").items[0]
         self.assertIn("missing_variant", it.flags)
 
+    def test_car_arrow_billion_scale(self):
+        txt = "ساینا⬅️1.695\nتارا(V4)توربو⬅️3.900\nدنا اتو⬅️3.790\nکرولا الیت⬅️8.690\nکشنده فوتون : ۲۳.۵۰۰"
+        its = P(txt).items
+        self.assertEqual(len(its), 5)
+        self.assertEqual(its[0].amount, Decimal("1695000000.000"))
+        self.assertEqual(its[1].amount, Decimal("3900000000.000"))
+        self.assertEqual(its[2].amount, Decimal("3790000000.000"))
+        self.assertEqual(its[3].amount, Decimal("8690000000.000"))
+        self.assertEqual(its[4].amount, Decimal("23500000000.000"))
+        self.assertEqual(its[0].stated_unit, "IRT")
+
     def test_deal(self):
         it = P("هدفون تخفیف ۴۰٪ قیمت قبلی ۵٬۰۰۰٬۰۰۰ تومان قیمت جدید ۳٬۰۰۰٬۰۰۰ تومان کد: SAVE40 تا ۲۴ ساعت دیگر").items[0]
         self.assertEqual((it.category, it.amount, it.extras["old_price"], it.extras["coupon_code"],

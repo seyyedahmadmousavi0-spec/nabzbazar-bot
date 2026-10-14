@@ -419,7 +419,7 @@ def create_app(cfg: Config, conn: sqlite3.Connection | None = None) -> Flask:
     def manual_publish() -> Any:
         d = db()
         from ..adapters import telegram_web
-        from ..publisher import render_market_bulletin
+        from ..publisher import render_car_bulletin, render_market_bulletin
         from ..senders import TelegramSender
 
         # 1. Fetch latest updates from web sources right now
@@ -430,8 +430,14 @@ def create_app(cfg: Config, conn: sqlite3.Connection | None = None) -> Flask:
         except Exception as exc:
             log.warning("manual poll error: %s", exc)
 
-        # 2. Build the latest bulletin
-        bulletin = render_market_bulletin(d, cfg.timezone)
+        # 2. Build the bulletin (either market or car)
+        b_type = request.form.get("bulletin_type", "market")
+        if b_type == "car":
+            bulletin = render_car_bulletin(d, cfg.timezone)
+            title_name = "نبض خودرو"
+        else:
+            bulletin = render_market_bulletin(d, cfg.timezone)
+            title_name = "نبض بازار"
 
         # 3. Publish to Telegram channel
         target_chat = cfg.publish_chat_id or "@nabzbazar360"
@@ -442,8 +448,8 @@ def create_app(cfg: Config, conn: sqlite3.Connection | None = None) -> Flask:
         try:
             sender = TelegramSender(cfg.bot_token)
             msg_id = sender.send(target_chat, bulletin, [])
-            audit(d, g.user, "manual_publish", {"chat": target_chat, "msg_id": msg_id, "new_messages": new_count})
-            flash(f"⚡ پایش فوری انجام شد ({new_count} پیام جدید پردازش شد) و پست به‌روزرسانی بازار با موفقیت در کانال منتشر گردید (شناسه تلگرام: {msg_id})", "ok")
+            audit(d, g.user, "manual_publish", {"chat": target_chat, "msg_id": msg_id, "type": b_type, "new_messages": new_count})
+            flash(f"⚡ پایش فوری انجام شد ({new_count} پیام جدید پردازش شد) و پست {title_name} با موفقیت در کانال منتشر گردید (شناسه تلگرام: {msg_id})", "ok")
         except Exception as exc:
             flash(f"خطا در انتشار به کانال تلگرام: {exc}", "err")
 

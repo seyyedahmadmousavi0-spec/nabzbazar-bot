@@ -161,6 +161,23 @@ def process_raw(conn: sqlite3.Connection, raw_id: int, now: datetime | None = No
                 valid_ids += _promote_corroborated(conn, rid, now)
         log_event(conn, "INFO" if res.status != "unparsed" else "WARN", "pipeline",
                   f"raw {raw_id} {res.status}: {len(ids)} record(s) {res.note}", cid, source_id=src["id"])
+        try:
+            from .car_announcements import detect_car_announcement, render_car_announcement
+            src_cats = jload(src["categories"], []) if src and src["categories"] else []
+            is_car_source = "car" in src_cats or any(k in (raw["text"] or "") for k in (
+                "قیمت جدید", "پیش فروش", "فروش فوق العاده", "حساب وکالتی", "بخشنامه", "میزان افزایش"
+            ))
+            if is_car_source:
+                ann = detect_car_announcement(raw["text"], conn)
+                if ann:
+                    brand = publisher._brand(conn)
+                    ann_text = render_car_announcement(ann, brand)
+                    ann_key = f"car_ann:{raw['source_id']}:{raw['external_id']}"
+                    publisher.enqueue(conn, kind="car_announcement", category="car", text=ann_text,
+                                      buttons=[], key=ann_key, record_ids=ids, confidence=1.0, now=now,
+                                      ref=("raw", raw["id"]))
+        except Exception as exc:
+            log.exception("car announcement check failed: %s", exc)
     for rid in valid_ids:
         run_hooks(conn, rid, now, tzname)
     return ids

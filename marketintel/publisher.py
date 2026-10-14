@@ -310,12 +310,114 @@ def render_market_bulletin(conn: sqlite3.Connection, tzname: str = "Asia/Tehran"
 
     if cars:
         lines.append(f"{RLM}🚗 <b>بازار و قیمت خودرو:</b>")
-        lines.extend(cars[:6])
+        lines.extend(cars[:8])
         lines.append("")
 
     lines.append("────────────────────")
     lines.append(_brand(conn))
     return "\n".join(lines)[:MAX_LEN]
+
+
+def render_car_bulletin(conn: sqlite3.Connection, tzname: str = "Asia/Tehran", now: datetime | None = None) -> str:
+    now = now or utcnow()
+    sep = get_setting(conn, "thousands_separator") or ","
+    dt = now.astimezone(tz(tzname))
+    jy, jm, jd = to_jalali_date(dt)
+
+    query = """
+    SELECT r.*, s.name as source_name
+    FROM records r
+    JOIN sources s ON s.id = r.source_id
+    WHERE r.category = 'car' AND r.amount_canonical IS NOT NULL AND r.amount >= 100000000
+    ORDER BY r.id DESC
+    """
+    rows = conn.execute(query).fetchall()
+    seen = set()
+    latest_cars = []
+    for r in rows:
+        key = (r["brand"], r["model"])
+        if key not in seen:
+            seen.add(key)
+            latest_cars.append(r)
+
+    from .catalog import default_catalog
+    catalog = default_catalog()
+
+    domestic = []
+    montazhi = []
+    imported = []
+    commercial = []
+
+    for it in latest_cars:
+        binfo = catalog.brands.get(it["brand"] or "", {})
+        seg = binfo.get("segment", "domestic")
+        brand_fa = binfo.get("name_fa") or it["asset_name"] or it["brand"] or ""
+        m_fa = it["model"] or ""
+        models_dict = binfo.get("models", {})
+        if it["model"] in models_dict and models_dict[it["model"]]:
+            m_fa = models_dict[it["model"]][0]
+
+        clean_brand = brand_fa.replace("\u200c", "").replace(" ", "").lower()
+        clean_model = m_fa.replace("\u200c", "").replace(" ", "").lower()
+        name_parts = [brand_fa]
+        if m_fa and clean_model not in clean_brand:
+            name_parts.append(m_fa)
+        if it["variant"]:
+            var = str(it["variant"])
+            clean_var = var.replace("\u200c", "").replace(" ", "").lower()
+            if clean_var not in clean_brand and (not m_fa or clean_var not in clean_model):
+                name_parts.append(var)
+        name = " ".join(name_parts).strip()
+
+        amt_str = fmt_number(it["amount"], decimals=0, sep=sep)
+        entry = f"{RLM}• <b>{e(name)}</b>: {amt_str} تومان"
+
+        if seg == "domestic":
+            domestic.append(entry)
+        elif seg == "montazhi":
+            montazhi.append(entry)
+        elif seg == "import":
+            imported.append(entry)
+        elif seg == "commercial":
+            commercial.append(entry)
+        else:
+            domestic.append(entry)
+
+    lines = [
+        f"{RLM}🚗 <b>نبض بازار خودرو</b>",
+        f"{RLM}📅 تاریخ: {to_persian_digits(f'{jy}/{jm:02d}/{jd:02d}')} — ساعت: {to_persian_digits(dt.strftime('%H:%M'))}",
+        "────────────────────"
+    ]
+
+    if domestic:
+        lines.append(f"{RLM}🇮🇷 <b>محصولات ایران‌خودرو و سایپا:</b>")
+        lines.extend(domestic[:8])
+        lines.append("")
+
+    if montazhi:
+        lines.append(f"{RLM}🚙 <b>خودروهای مونتاژی (چینی‌های پرطرفدار):</b>")
+        lines.extend(montazhi[:8])
+        lines.append("")
+
+    if imported:
+        lines.append(f"{RLM}🌐 <b>خودروهای وارداتی:</b>")
+        lines.extend(imported[:8])
+        lines.append("")
+
+    if commercial:
+        lines.append(f"{RLM}🚚 <b>وانت، پیکاپ و خودروهای تجاری / سنگین:</b>")
+        lines.extend(commercial[:8])
+        lines.append("")
+
+    if not (domestic or montazhi or imported or commercial):
+        lines.append(f"{RLM}اطلاعات جدیدی از قیمت خودرو در پایگاه داده ثبت نشده است.")
+        lines.append("")
+
+    lines.append("────────────────────")
+    lines.append(f"{RLM}#نبض_خودرو #قیمت_روز #بازار_خودرو")
+    lines.append(_brand(conn))
+    return "\n".join(lines)[:MAX_LEN]
+
 
 
 def render_opportunity(conn: sqlite3.Connection, opp: Any, tzname: str) -> tuple[str, list[list[dict[str, str]]]]:

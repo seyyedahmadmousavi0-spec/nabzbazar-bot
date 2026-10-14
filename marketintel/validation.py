@@ -31,7 +31,7 @@ RULES: dict[str, tuple[str, str]] = {
     "stale": ("stale", "اطلاعات کهنه / stale observation"),
     "future_observation": ("warn", "زمان مشاهده در آینده / observation time in the future"),
     "missing_model": ("warn", "مدل خودرو مشخص نیست / vehicle model missing"),
-    "missing_variant": ("warn", "تیپ/سال خودرو مشخص نیست / variant/year missing"),
+    "missing_variant": ("info", "تیپ/سال خودرو مشخص نیست / variant/year missing"),
     "discount_inconsistent": ("warn", "درصد تخفیف با قیمت‌ها نمی‌خواند / discount inconsistent with prices"),
 }
 
@@ -98,6 +98,16 @@ def validate(conn: sqlite3.Connection, item: ParsedItem, observed_at: datetime, 
 
     if "missing_model" in codes or "missing_variant" in codes:
         pass  # already flagged by parser for cars
+    if item.category == "car":
+        if "ambiguous_separator" in codes:
+            codes.remove("ambiguous_separator")
+        if item.brand in ("saina", "sahand", "atlas", "re_ra", "shahin", "tara", "dena", "soren", "runna", "samand",
+                          "fidelity", "dignity", "respect", "cheval", "lamari", "tisan", "eco", "lucano",
+                          "corolla", "camry", "frontlander", "elantra", "sonata", "sportage",
+                          "heavy_foton", "heavy_empower", "heavy_faw", "heavy_pilsan", "heavy_dima", "heavy_arena",
+                          "heavy_force", "heavy_baic", "van_wana", "pride_pickup", "zamyad", "arisan"):
+            if "missing_model" in codes:
+                codes.remove("missing_model")
     if observed_at > now + timedelta(minutes=10):
         codes.append("future_observation")
 

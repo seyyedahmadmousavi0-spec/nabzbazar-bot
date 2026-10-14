@@ -27,7 +27,7 @@ _EXPIRE_H = re.compile(r"تا\s*(\d{1,3})\s*ساعت دیگر")
 _YEAR_RE = re.compile(r"(?:مدل\s*)?(?<!\d)(1[34]\d\d|20[12]\d)(?!\d)")
 _TIP_RE = re.compile(r"تیپ\s*(\d)")
 _KM_RE = re.compile(r"کارکرد\s*([\d,]+)\s*(?:کیلومتر|km)?")
-_VARIANT_WORDS = ("اتوماتیک", "دنده ای", "دستی", "پلاس", "فول", "الیت", "کراس", "توربو")
+_VARIANT_WORDS = ("اتوماتیک", "اتومات", "دنده ای", "دستی", "پلاس", "فول", "الیت", "کراس", "توربو", "پانوراما", "پانا", "سانروف", "دوگانه", "آپشنال", "پرایم", "پرستیژ", "هیبرید")
 UNIT_NAMES = {"IRT": "toman", "IRR": "rial", "USD": "usd"}
 
 
@@ -258,7 +258,26 @@ def _build_car_item(w: str, cat: Catalog, ctx: SourceCtx, header: str | None,
     priced = [t for t in toks if t.unit or t.scale_word]
     primary = priced[0] if priced else None
     if primary is None:
-        it.flags.append("missing_price")
+        candidate = None
+        for t in reversed(toks):
+            if t.value >= 100_000_000:
+                candidate = t
+                it.amount = t.value
+                it.stated_unit, it.unit_rule = _resolve_unit(t.unit, header, ctx)
+                if it.stated_unit is None:
+                    it.stated_unit, it.unit_rule = "IRT", "car_default:toman"
+                it.extras["raw_price"] = t.raw
+                break
+            elif Decimal("0.1") <= t.value < Decimal("200"):
+                candidate = t
+                it.amount = t.value * Decimal(1_000_000_000)
+                it.stated_unit = "IRT"
+                it.unit_rule = "inferred_billion_toman"
+                it.extras["raw_price"] = t.raw
+                it.extras["scale_word"] = "میلیارد"
+                break
+        if candidate is None:
+            it.flags.append("missing_price")
     else:
         it.amount = primary.value
         it.stated_unit, it.unit_rule = _resolve_unit(primary.unit, header, ctx)
@@ -349,13 +368,25 @@ def parse_generic(text: str, ctx: SourceCtx, cat: Catalog | None = None) -> Pars
             line_items = [deal]
         else:
             if items and items[-1].category == "car" and "missing_price" in items[-1].flags and toks:
-                priced = [t for t in toks if t.unit or t.scale_word or t.value >= 100_000_000]
+                priced = [t for t in toks if t.unit or t.scale_word or t.value >= 100_000_000 or (Decimal("0.1") <= t.value < Decimal("200"))]
                 if priced:
                     it_car = items[-1]
-                    it_car.amount = priced[0].value
-                    it_car.stated_unit, it_car.unit_rule = _resolve_unit(priced[0].unit, header, ctx)
-                    it_car.extras["raw_price"] = priced[0].raw
-                    it_car.flags.remove("missing_price")
+                    pt = priced[0]
+                    if pt.unit or pt.scale_word:
+                        it_car.amount = pt.value
+                        it_car.stated_unit, it_car.unit_rule = _resolve_unit(pt.unit, header, ctx)
+                    elif pt.value >= 100_000_000:
+                        it_car.amount = pt.value
+                        it_car.stated_unit = "IRT"
+                        it_car.unit_rule = "car_default:toman"
+                    elif Decimal("0.1") <= pt.value < Decimal("200"):
+                        it_car.amount = pt.value * Decimal(1_000_000_000)
+                        it_car.stated_unit = "IRT"
+                        it_car.unit_rule = "inferred_billion_toman"
+                        it_car.extras["scale_word"] = "میلیارد"
+                    it_car.extras["raw_price"] = pt.raw
+                    if "missing_price" in it_car.flags:
+                        it_car.flags.remove("missing_price")
                     if it_car.stated_unit is None:
                         it_car.flags.append("missing_unit")
                     continue
