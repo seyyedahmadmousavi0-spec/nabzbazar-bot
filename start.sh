@@ -10,3 +10,4 @@ else
     echo "ERROR: Neither python3 nor python was found in PATH!" >&2
     exit 127
 fi
+

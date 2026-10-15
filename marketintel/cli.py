@@ -121,6 +121,7 @@ def cmd_worker(cfg: Config, a: argparse.Namespace) -> int:
 def cmd_run_all(cfg: Config, a: argparse.Namespace) -> int:
     import os
     import threading
+    print(f"=== Starting MarketIntel on {cfg.admin_host}:{cfg.admin_port} ===", flush=True)
     c = _conn(cfg)
     client = bot_api.HttpBotClient(cfg.bot_token) if cfg.bot_token else None
     sender = build_sender(cfg)
