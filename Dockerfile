@@ -11,9 +11,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-RUN mkdir -p data
+RUN mkdir -p data && chmod +x start.sh
 
 EXPOSE 8080
 
-CMD ["python", "-m", "marketintel", "run-all", "--interval", "20"]
+CMD ["bash", "start.sh"]
 

@@ -23,7 +23,7 @@
    - **Branch:** `main` یا `master`
    - **Runtime:** `Python 3`
    - **Build Command:** `pip install -r requirements.txt`
-   - **Start Command:** `python -m marketintel run-all --interval 20`
+   - **Start Command:** `bash start.sh`
    - **Instance Type:** `Free` (رایگان)
 
 ### مرحله ۳: وارد کردن متغیرهای محیطی (Environment Variables)

@@ -1,2 +1,2 @@
-web: python -m marketintel run-all --interval 20
+web: bash start.sh
 
