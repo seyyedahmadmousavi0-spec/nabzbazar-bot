@@ -35,17 +35,22 @@ def _conn(cfg: Config) -> sqlite3.Connection:
             admin_pass = os.environ.get("MI_ADMIN_PASSWORD", "admin123456")
             c.execute("INSERT OR IGNORE INTO users(username,password_hash,role,created_at) VALUES (?,?,?,?)",
                       ("admin", generate_password_hash(admin_pass), "admin", iso(utcnow())))
-        if not c.execute("SELECT 1 FROM settings WHERE key='auto_bulletin_interval_minutes'").fetchone():
-            db.set_setting(c, "auto_bulletin_interval_minutes", 15)
-            db.set_setting(c, "publish_mode", "auto")
-            db.set_setting(c, "show_source", 0)
-            db.set_setting(c, "show_verification", 0)
-            db.set_setting(c, "show_source_url", 0)
-            db.set_setting(c, "thousands_separator", ",")
-            db.set_setting(c, "brand_line", "📈 نبض بازار | @nabzbazar360")
-            db.set_setting(c, "auto_categories", ["currency", "gold", "coin", "crypto", "car"])
-        if not c.execute("SELECT 1 FROM settings WHERE key='auto_car_bulletin_interval_hours'").fetchone():
-            db.set_setting(c, "auto_car_bulletin_interval_hours", 6)
+        # Ensure operational settings are set to auto bulletin-only mode
+        db.set_setting(c, "publish_mode", "auto")
+        db.set_setting(c, "enable_alerts", 0)
+        db.set_setting(c, "enable_car_announcements", 0)
+        db.set_setting(c, "enable_summaries", 0)
+        db.set_setting(c, "auto_publish_quotes", 0)
+        db.set_setting(c, "auto_bulletin_interval_minutes", 15)
+        db.set_setting(c, "auto_car_bulletin_interval_hours", 3)
+        db.set_setting(c, "show_source", 0)
+        db.set_setting(c, "show_verification", 0)
+        db.set_setting(c, "show_source_url", 0)
+        db.set_setting(c, "thousands_separator", ",")
+        db.set_setting(c, "brand_line", "📈 نبض بازار | @nabzbazar360")
+        db.set_setting(c, "auto_categories", ["currency", "gold", "coin", "crypto", "car"])
+        # Cancel any leftover non-bulletin posts
+        c.execute("UPDATE outbox SET status='cancelled' WHERE kind NOT IN ('bulletin', 'car_bulletin') AND status IN ('queued', 'pending_approval')")
     except Exception as exc:
         logging.getLogger(__name__).warning("auto-bootstrap warning: %s", exc)
     return c
@@ -125,6 +130,7 @@ def cmd_run_all(cfg: Config, a: argparse.Namespace) -> int:
     c = _conn(cfg)
     client = bot_api.HttpBotClient(cfg.bot_token) if cfg.bot_token else None
     sender = build_sender(cfg)
+    print(f"=== Sender: {type(sender).__name__} (live={cfg.live_publish}, target={cfg.publish_chat_id}) ===", flush=True)
     interval = getattr(a, "interval", 20.0)
     stop = threading.Event()
     worker_thread = threading.Thread(

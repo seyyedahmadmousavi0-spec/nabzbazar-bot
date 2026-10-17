@@ -313,6 +313,9 @@ def render_market_bulletin(conn: sqlite3.Connection, tzname: str = "Asia/Tehran"
         lines.extend(cars[:8])
         lines.append("")
 
+    if not (currencies or gold_coins or energy_items or cryptos or cars):
+        return ""
+
     lines.append("────────────────────")
     lines.append(_brand(conn))
     return "\n".join(lines)[:MAX_LEN]
@@ -410,8 +413,7 @@ def render_car_bulletin(conn: sqlite3.Connection, tzname: str = "Asia/Tehran", n
         lines.append("")
 
     if not (domestic or montazhi or imported or commercial):
-        lines.append(f"{RLM}اطلاعات جدیدی از قیمت خودرو در پایگاه داده ثبت نشده است.")
-        lines.append("")
+        return ""
 
     lines.append("────────────────────")
     lines.append(f"{RLM}#نبض_خودرو #قیمت_روز #بازار_خودرو")
@@ -475,6 +477,8 @@ def enqueue(conn: sqlite3.Connection, *, kind: str, category: str, text: str,
 
 
 def maybe_enqueue_alert(conn: sqlite3.Connection, rec: Any, now: datetime, tzname: str) -> int | None:
+    if not get_setting(conn, "enable_alerts"):
+        return None
     if rec["category"] not in ("currency", "gold", "coin", "crypto"):
         return None
     window = int(get_setting(conn, "alert_window_minutes"))

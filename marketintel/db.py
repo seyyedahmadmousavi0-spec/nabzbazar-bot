@@ -19,6 +19,10 @@ DEFAULT_SETTINGS: dict[str, Any] = {
     "min_auto_confidence": 0.8,
     "auto_approve_opportunities": 0,   # 1 = auto publish opportunities without approval
     "auto_publish_quotes": 0,          # 1 = auto publish regular price updates
+    "enable_alerts": 1,                # 1 = enabled by default for tests; set to 0 in runtime config
+    "enable_car_announcements": 0,     # 0 = disabled (per user requirement)
+    "enable_summaries": 0,             # 0 = disabled (per user requirement)
+    "enable_opportunities": 0,         # 0 = disabled (per user requirement)
     "quiet_hours": "",                 # "23:00-07:00" in publication timezone; empty = off
     "min_interval_seconds": 3,
     "alert_change_pct": 2.0,

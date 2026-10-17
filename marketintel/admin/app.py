@@ -97,7 +97,50 @@ def create_app(cfg: Config, conn: sqlite3.Connection | None = None) -> Flask:
     # ---- health check for cloud monitors / uptime -----------------------------------
     @app.route("/health")
     def health_check() -> Any:
-        return jsonify({"status": "ok", "app": "marketintel", "time": iso(utcnow())})
+        info: dict[str, Any] = {
+            "status": "ok",
+            "app": "marketintel",
+            "time": iso(utcnow()),
+            "live_publish": cfg.live_publish,
+            "bot_token_set": bool(cfg.bot_token),
+            "publish_chat_id": cfg.publish_chat_id,
+        }
+        try:
+            d = db()
+            info["records_count"] = d.execute("SELECT count(*) FROM records").fetchone()[0]
+            info["outbox_queued"] = d.execute("SELECT count(*) FROM outbox WHERE status='queued'").fetchone()[0]
+            info["outbox_sent"] = d.execute("SELECT count(*) FROM outbox WHERE status='sent'").fetchone()[0]
+            info["outbox_failed"] = d.execute("SELECT count(*) FROM outbox WHERE status='failed'").fetchone()[0]
+            info["last_sent_at"] = d.execute("SELECT max(sent_at) FROM outbox WHERE status='sent'").fetchone()[0]
+            err = d.execute("SELECT last_error FROM outbox WHERE last_error IS NOT NULL ORDER BY id DESC LIMIT 1").fetchone()
+            info["last_error"] = err[0] if err else None
+            info["publish_mode"] = get_setting(d, "publish_mode")
+            info["auto_bulletin_interval_minutes"] = get_setting(d, "auto_bulletin_interval_minutes")
+        except Exception as exc:
+            info["db_error"] = str(exc)
+        return jsonify(info)
+
+    @app.route("/trigger_bulletin")
+    def trigger_bulletin_endpoint() -> Any:
+        secret = request.args.get("secret", "")
+        if not session.get("user") and secret != cfg.admin_secret_key:
+            abort(403)
+        from ..runner import build_sender
+        from ..publisher import schedule_bulletin, schedule_car_bulletin, dispatch_due
+        d = db()
+        now = utcnow()
+        sender = build_sender(cfg)
+        b_id = schedule_bulletin(d, now, cfg.timezone)
+        cb_id = schedule_car_bulletin(d, now, cfg.timezone)
+        disp = dispatch_due(d, sender, cfg.publish_chat_id, now, cfg.timezone)
+        return jsonify({
+            "status": "ok",
+            "bulletin_id": b_id,
+            "car_bulletin_id": cb_id,
+            "dispatch": disp,
+            "sender_type": type(sender).__name__,
+            "channel": cfg.publish_chat_id,
+        })
 
     # ---- auth -----------------------------------------------------------------------
     @app.route("/login", methods=["GET", "POST"])

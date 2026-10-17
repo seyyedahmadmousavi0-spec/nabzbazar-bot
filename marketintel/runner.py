@@ -53,7 +53,9 @@ def run_cycle(conn: sqlite3.Connection, cfg: Config, client: bot_api.BotClient |
         out["web_ingest_error"] = str(exc)
         log.error("telegram_web ingestion failed: %s", exc)
     with tx(conn):
-        publisher.schedule_summaries(conn, now, cfg.timezone)
+        from .db import get_setting
+        if get_setting(conn, "enable_summaries"):
+            publisher.schedule_summaries(conn, now, cfg.timezone)
         publisher.schedule_bulletin(conn, now, cfg.timezone)
         publisher.schedule_car_bulletin(conn, now, cfg.timezone)
         opportunities.expire_old(conn, now)
