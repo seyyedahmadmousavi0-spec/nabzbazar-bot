@@ -180,7 +180,7 @@ def render_market_bulletin(conn: sqlite3.Connection, tzname: str = "Asia/Tehran"
     SELECT r.*, s.name as source_name, s.attribution
     FROM records r
     JOIN sources s ON s.id = r.source_id
-    WHERE r.amount_canonical IS NOT NULL AND r.amount > 0
+    WHERE r.amount_canonical IS NOT NULL AND r.amount > 0 AND r.category != 'car'
     ORDER BY r.id DESC
     """
     rows = conn.execute(query).fetchall()
@@ -219,7 +219,6 @@ def render_market_bulletin(conn: sqlite3.Connection, tzname: str = "Asia/Tehran"
     gold_coins = []
     energy_items = []
     cryptos = []
-    cars = []
 
     for it in latest_items:
         cat = it["category"]
@@ -284,10 +283,6 @@ def render_market_bulletin(conn: sqlite3.Connection, tzname: str = "Asia/Tehran"
             energy_items.append(entry)
         elif cat == "crypto":
             cryptos.append(entry)
-        elif cat == "car":
-            if it['amount'] and it['amount'] >= 100_000_000:
-                cars.append(entry)
-
     if currencies:
         lines.append(f"{RLM}💵 <b>ارز و اسکناس:</b>")
         lines.extend(currencies[:10])
@@ -308,13 +303,25 @@ def render_market_bulletin(conn: sqlite3.Connection, tzname: str = "Asia/Tehran"
         lines.extend(cryptos[:8])
         lines.append("")
 
-    if cars:
-        lines.append(f"{RLM}🚗 <b>بازار و قیمت خودرو:</b>")
-        lines.extend(cars[:8])
-        lines.append("")
-
-    if not (currencies or gold_coins or energy_items or cryptos or cars):
+    if not (currencies or gold_coins or energy_items or cryptos):
         return ""
+
+    # Link to the latest published car bulletin
+    target_row = conn.execute(
+        "SELECT target_chat FROM outbox WHERE target_chat IS NOT NULL ORDER BY id DESC LIMIT 1"
+    ).fetchone()
+    ch_user = (target_row["target_chat"] if target_row and target_row["target_chat"] else "@nabzbazar360").lstrip("@")
+    last_car_post = conn.execute(
+        "SELECT telegram_message_id FROM outbox WHERE kind='car_bulletin' AND status='sent' "
+        "AND telegram_message_id IS NOT NULL ORDER BY id DESC LIMIT 1"
+    ).fetchone()
+    if last_car_post and last_car_post["telegram_message_id"]:
+        car_url = f"https://t.me/{ch_user}/{last_car_post['telegram_message_id']}"
+    else:
+        car_url = f"https://t.me/{ch_user}"
+
+    lines.append(f"{RLM}🚗 <b>بازار خودرو:</b> مشاهده آخرین <a href=\"{car_url}\"><b>قیمت‌های روز خودرو</b></a> 👈")
+    lines.append("")
 
     lines.append("────────────────────")
     lines.append(_brand(conn))
@@ -414,6 +421,23 @@ def render_car_bulletin(conn: sqlite3.Connection, tzname: str = "Asia/Tehran", n
 
     if not (domestic or montazhi or imported or commercial):
         return ""
+
+    # Link to the latest published market bulletin
+    target_row = conn.execute(
+        "SELECT target_chat FROM outbox WHERE target_chat IS NOT NULL ORDER BY id DESC LIMIT 1"
+    ).fetchone()
+    ch_user = (target_row["target_chat"] if target_row and target_row["target_chat"] else "@nabzbazar360").lstrip("@")
+    last_market_post = conn.execute(
+        "SELECT telegram_message_id FROM outbox WHERE kind='bulletin' AND status='sent' "
+        "AND telegram_message_id IS NOT NULL ORDER BY id DESC LIMIT 1"
+    ).fetchone()
+    if last_market_post and last_market_post["telegram_message_id"]:
+        market_url = f"https://t.me/{ch_user}/{last_market_post['telegram_message_id']}"
+    else:
+        market_url = f"https://t.me/{ch_user}"
+
+    lines.append(f"{RLM}📊 <b>نبض بازار:</b> مشاهده آخرین <a href=\"{market_url}\"><b>نرخ‌های ارز، طلا و رمزارز</b></a> 👈")
+    lines.append("")
 
     lines.append("────────────────────")
     lines.append(f"{RLM}#نبض_خودرو #قیمت_روز #بازار_خودرو")

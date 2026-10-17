@@ -17,15 +17,15 @@
 
     {"key": "gold18", "category": "gold", "name_fa": "طلای ۱۸ عیار (هر گرم)", "aliases": ["طلای 18 عیار", "طلای 18", "طلا 18 عیار", "طلای 18عیار", "گرم طلا 18", "گرم 18 عیار", "گرم ۱۸ عیار"], "unit_of_measure": "gram", "bounds": [100000, 100000000000], "max_jump_pct": 12, "stale_minutes": 360},
     {"key": "gold24", "category": "gold", "name_fa": "طلای ۲۴ عیار (هر گرم)", "aliases": ["طلای 24 عیار", "طلای 24", "طلا 24 عیار", "طلای 24عیار", "گرم طلا 24", "گرم 24 عیار", "گرم ۲۴ عیار"], "unit_of_measure": "gram", "bounds": [100000, 100000000000], "max_jump_pct": 12, "stale_minutes": 360},
-    {"key": "gold_melted", "category": "gold", "name_fa": "طلای آب‌شده نقدی", "aliases": ["طلای آب‌شده نقدی", "طلای آب شده نقدی", "طلای آب‌شده", "طلای آب شده", "آبشده نقدی", "ابشده نقدی", "آبشده", "ابشده", "طلای ابشده", "طلای اب شده"], "unit_of_measure": "mesghal", "bounds": [100000, 1000000000000], "max_jump_pct": 12, "stale_minutes": 360},
-    {"key": "mesghal", "category": "gold", "name_fa": "مثقال طلا", "aliases": ["مثقال طلا", "مثقال"], "unit_of_measure": "mesghal", "bounds": [100000, 1000000000000], "max_jump_pct": 12, "stale_minutes": 360},
-    {"key": "gold_ounce", "category": "gold", "name_fa": "انس طلا", "aliases": ["انس طلا", "انس", "اونس طلا", "اونس"], "unit_of_measure": "ounce", "bounds": [100, 100000000], "max_jump_pct": 12, "stale_minutes": 360},
+    {"key": "gold_melted", "category": "gold", "name_fa": "طلای آب‌شده نقدی", "aliases": ["طلای آب‌شده نقدی", "طلای آب شده نقدی", "طلای آب‌شده", "طلای آب شده", "آبشده نقدی", "ابشده نقدی", "آبشده", "ابشده", "طلای ابشده", "طلای اب شده"], "unit_of_measure": "mesghal", "bounds": [100000, 5000000000], "max_jump_pct": 12, "stale_minutes": 360},
+    {"key": "mesghal", "category": "gold", "name_fa": "مثقال طلا", "aliases": ["مثقال طلا", "مثقال"], "unit_of_measure": "mesghal", "bounds": [100000, 5000000000], "max_jump_pct": 12, "stale_minutes": 360},
+    {"key": "gold_ounce", "category": "gold", "name_fa": "انس طلا", "aliases": ["انس طلا", "انس", "اونس طلا", "اونس"], "unit_of_measure": "ounce", "bounds": [100, 100000], "max_jump_pct": 12, "stale_minutes": 360},
 
-    {"key": "coin_emami", "category": "coin", "name_fa": "سکه امامی (طرح جدید)", "aliases": ["سکه امامی", "سکه طرح جدید", "سکه تمام امامی", "سکه تمام", "سکه جدید"], "unit_of_measure": "coin", "bounds": [1000000, 10000000000000], "max_jump_pct": 12, "stale_minutes": 360},
-    {"key": "coin_bahar", "category": "coin", "name_fa": "سکه بهار آزادی (طرح قدیم)", "aliases": ["سکه بهار آزادی", "سکه طرح قدیم", "سکه بهار", "سکه قدیم"], "unit_of_measure": "coin", "bounds": [1000000, 10000000000000], "max_jump_pct": 12, "stale_minutes": 360},
-    {"key": "coin_half", "category": "coin", "name_fa": "نیم‌سکه", "aliases": ["نیم سکه", "نیمسکه", "سکه نیم"], "unit_of_measure": "coin", "bounds": [500000, 10000000000000], "max_jump_pct": 12, "stale_minutes": 360},
-    {"key": "coin_quarter", "category": "coin", "name_fa": "ربع‌سکه", "aliases": ["ربع سکه", "ربعسکه", "سکه ربع"], "unit_of_measure": "coin", "bounds": [250000, 10000000000000], "max_jump_pct": 12, "stale_minutes": 360},
-    {"key": "coin_gerami", "category": "coin", "name_fa": "سکه گرمی", "aliases": ["سکه گرمی"], "unit_of_measure": "coin", "bounds": [100000, 10000000000000], "max_jump_pct": 12, "stale_minutes": 360},
+    {"key": "coin_emami", "category": "coin", "name_fa": "سکه امامی (طرح جدید)", "aliases": ["سکه امامی", "سکه طرح جدید", "سکه تمام امامی", "سکه تمام", "سکه جدید"], "unit_of_measure": "coin", "bounds": [1000000, 20000000000], "max_jump_pct": 12, "stale_minutes": 360},
+    {"key": "coin_bahar", "category": "coin", "name_fa": "سکه بهار آزادی (طرح قدیم)", "aliases": ["سکه بهار آزادی", "سکه طرح قدیم", "سکه بهار", "سکه قدیم"], "unit_of_measure": "coin", "bounds": [1000000, 20000000000], "max_jump_pct": 12, "stale_minutes": 360},
+    {"key": "coin_half", "category": "coin", "name_fa": "نیم‌سکه", "aliases": ["نیم سکه", "نیمسکه", "سکه نیم"], "unit_of_measure": "coin", "bounds": [500000, 10000000000], "max_jump_pct": 12, "stale_minutes": 360},
+    {"key": "coin_quarter", "category": "coin", "name_fa": "ربع‌سکه", "aliases": ["ربع سکه", "ربعسکه", "سکه ربع"], "unit_of_measure": "coin", "bounds": [250000, 6000000000], "max_jump_pct": 12, "stale_minutes": 360},
+    {"key": "coin_gerami", "category": "coin", "name_fa": "سکه گرمی", "aliases": ["سکه گرمی"], "unit_of_measure": "coin", "bounds": [100000, 4000000000], "max_jump_pct": 12, "stale_minutes": 360},
 
     {"key": "oil_brent", "category": "energy", "name_fa": "نفت برنت جهانی", "aliases": ["نفت برنت", "نفت خام", "نفت جهانی", "نفت", "oil"], "unit_of_measure": "barrel", "bounds": [1, 1000000], "max_jump_pct": 15, "stale_minutes": 360},
 
